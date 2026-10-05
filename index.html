@@ -16,8 +16,9 @@
       <p class="subtitle">Caso activo: <b>Mama izquierda</b>. Trabaja como Doctora, Física médica y Enfermería.</p>
     </div>
     <div class="top-actions">
+      <span id="sessionBadge" class="session-badge hidden">📦 Stock</span>
       <button id="teacherBtn" class="mini-btn">👩‍🏫 Modo profesor</button>
-      <span class="tag">Mujeres en la Ciencia · V0.3</span>
+      <span class="tag">Mujeres en la Ciencia · V0.4 Classroom</span>
     </div>
   </header>
 
@@ -35,9 +36,11 @@
           <div id="structureSelector" class="structure-selector"></div>
         </div>
         <div>
-          <div class="eyebrow">Acciones</div>
+          <div class="eyebrow">Herramienta</div>
           <div class="toolbar-actions">
-            <button id="clearContourBtn" class="mini-btn">Borrar</button>
+            <button id="paintToolBtn" class="mini-btn primary">🖌️ Pintar</button>
+            <button id="eraseToolBtn" class="mini-btn">🧽 Borrar</button>
+            <button id="clearContourBtn" class="mini-btn">Limpiar volumen</button>
             <button id="validateContourBtn" class="mini-btn primary">Validar contorno</button>
           </div>
         </div>
@@ -46,11 +49,11 @@
       <div id="teacherPanel" class="teacher-panel hidden">
         <div>
           <div class="eyebrow">Modo profesor</div>
-          <label class="checkline"><input id="showTruthChk" type="checkbox"> Mostrar contornos de referencia</label>
-          <div class="tiny muted">Selecciona arriba la estructura que quieras editar.</div>
+          <label class="checkline"><input id="showTruthChk" type="checkbox"> Mostrar referencias completas</label>
+          <div class="tiny muted">El volumen activo siempre muestra una guía punteada al alumnado.</div>
         </div>
         <div>
-          <div class="eyebrow">Editar referencia</div>
+          <div class="eyebrow">Editar referencia activa</div>
           <div class="teacher-actions">
             <button class="mini-btn shift-btn" data-dx="-5" data-dy="0">←</button>
             <button class="mini-btn shift-btn" data-dx="0" data-dy="-5">↑</button>
@@ -58,9 +61,16 @@
             <button class="mini-btn shift-btn" data-dx="5" data-dy="0">→</button>
             <button class="mini-btn scale-btn" data-scale="0.94">− tamaño</button>
             <button class="mini-btn scale-btn" data-scale="1.06">+ tamaño</button>
-            <button id="saveTeacherBtn" class="mini-btn primary">Guardar en este iPad</button>
-            <button id="resetTeacherBtn" class="mini-btn">Restaurar referencias</button>
+            <button id="restoreStockBtn" class="mini-btn">Restaurar stock</button>
           </div>
+        </div>
+        <div class="teacher-session">
+          <div class="eyebrow">Sesión Classroom</div>
+          <div class="teacher-session-row">
+            <input id="teacherSessionCode" class="session-input" maxlength="16" placeholder="Ej. CARO01" autocomplete="off">
+            <button id="publishSessionBtn" class="mini-btn primary">Publicar a todos</button>
+          </div>
+          <div class="tiny muted">Las iPads conectadas a ese código recibirán los contornos corregidos automáticamente.</div>
         </div>
       </div>
 
@@ -104,7 +114,7 @@
           <div id="missionNum" class="mission-num">1</div>
           <div>
             <h2 id="missionTitle">Contorneo médico</h2>
-            <p id="missionText">Elige una estructura, coloréala con el dedo y valida el resultado.</p>
+            <p id="missionText">Elige una estructura, colorea dentro de la guía punteada y valida el resultado.</p>
           </div>
         </div>
         <div id="statusBox" class="status-box"></div>
@@ -153,10 +163,28 @@
   <footer>Simulación educativa · No debe utilizarse para decisiones clínicas.</footer>
 </div>
 
+<div id="startModal" class="modal">
+  <div class="modal-card start-card">
+    <div class="eyebrow">Antes de empezar</div>
+    <h2>¿Cómo quieres cargar los contornos de referencia?</h2>
+    <p class="muted">Puedes usar los contornos incluidos en la app o conectarte a una sesión preparada por el profesor.</p>
+    <button id="useStockBtn" class="start-choice">
+      <b>📦 Usar contornos stock</b>
+      <span>Empieza inmediatamente con las referencias incluidas en esta versión.</span>
+    </button>
+    <div class="start-divider">o</div>
+    <div class="session-join">
+      <input id="studentSessionCode" class="session-input" maxlength="16" placeholder="Código de sesión · ej. CARO01" autocomplete="off">
+      <button id="joinSessionBtn" class="btn primary">Conectarme a sesión</button>
+    </div>
+    <div id="joinStatus" class="tiny muted"></div>
+  </div>
+</div>
+
 <div id="teacherModal" class="modal hidden">
   <div class="modal-card">
     <h2>Modo profesor</h2>
-    <p class="muted">Habilita referencias y edición local de los volúmenes.</p>
+    <p class="muted">Permite editar referencias y publicarlas a una sesión compartida.</p>
     <label class="field">Usuario<input id="teacherUser" type="text" autocomplete="username"></label>
     <label class="field">Password<input id="teacherPass" type="password" autocomplete="current-password"></label>
     <div class="modal-actions">
