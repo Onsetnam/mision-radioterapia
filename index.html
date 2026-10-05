@@ -1,573 +1,150 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta name="theme-color" content="#07111f" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Misión Radioterapia</title>
-  <style>
-    :root{
-      --bg:#07111f; --panel:#0d1a2d; --panel2:#11233b; --line:#29415f;
-      --text:#f4f8ff; --muted:#aebbd0; --cyan:#67d9ff; --violet:#b793ff;
-      --green:#6ee7a8; --yellow:#ffd166; --pink:#ff6b86; --danger:#ff7a95;
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;min-height:100%;background:
-      radial-gradient(900px 600px at 5% -10%,#17345b 0%,transparent 55%),
-      radial-gradient(800px 600px at 100% 0%,#35204e 0%,transparent 50%),var(--bg);
-      color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    body{overscroll-behavior:none}
-    button{font:inherit}
-    .app{max-width:1280px;margin:0 auto;padding:16px 16px 28px}
-    header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:14px}
-    h1{margin:0;font-size:clamp(1.55rem,3vw,2.45rem);letter-spacing:-.03em}
-    .subtitle{margin:5px 0 0;color:var(--muted);max-width:760px;line-height:1.4}
-    .tag{font-size:.8rem;color:#dbe9ff;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);
-      border-radius:999px;padding:8px 11px;white-space:nowrap}
-    .layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(310px,.72fr);gap:16px}
-    @media(max-width:920px){.layout{grid-template-columns:1fr}.side{order:-1}}
-    .card{background:linear-gradient(180deg,rgba(15,29,51,.97),rgba(8,18,33,.98));border:1px solid rgba(255,255,255,.08);
-      border-radius:24px;box-shadow:0 24px 70px rgba(0,0,0,.26);overflow:hidden}
-    .game-card{position:relative;padding:12px;min-height:640px;display:flex;align-items:center;justify-content:center}
-    canvas{display:block;width:min(100%,780px);height:auto;aspect-ratio:1/1;border-radius:20px;background:#090f18;touch-action:none}
-    .hud{position:absolute;left:26px;right:26px;top:24px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
-    .pill{padding:8px 11px;border:1px solid rgba(255,255,255,.1);background:rgba(5,11,21,.78);backdrop-filter:blur(10px);
-      border-radius:13px;font-size:.8rem;color:#e2ecff}
-    .side{padding:16px;display:flex;flex-direction:column;gap:12px}
-    .section{border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.035);border-radius:18px;padding:13px}
-    .section h2{font-size:.98rem;margin:0 0 7px}
-    .section p{font-size:.9rem;color:var(--muted);line-height:1.45;margin:0}
-    .role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
-    .role{border:1px solid var(--line);background:#0e1b31;color:#e7efff;border-radius:13px;padding:9px 7px;min-height:66px;
-      cursor:pointer;font-size:.78rem;font-weight:700}
-    .role span{display:block;font-size:1.2rem;margin-bottom:3px}.role.active{border-color:#75dfff;background:#18334f;box-shadow:0 0 0 2px rgba(103,217,255,.1)}
-    .mission{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
-    .mission-num{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--violet));
-      color:#07111f;font-weight:900;font-size:.82rem}
-    .small{font-size:.79rem!important}
-    .beam-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-    .beam-chip{font-size:.78rem;border:1px solid #2b4769;background:#102039;padding:7px 9px;border-radius:999px;color:#dceaff}
-    .buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-    .btn{border:1px solid #33506f;border-radius:14px;padding:12px 10px;cursor:pointer;font-weight:800;color:white;background:#142741}
-    .btn.primary{border:0;color:#06111f;background:linear-gradient(135deg,#69e0ff,#a78bfa)}
-    .btn.warn{background:#351b2a;border-color:#66334b;color:#ffdbe5}
-    .btn:disabled{opacity:.42;cursor:not-allowed}
-    .score-wrap{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;margin-top:10px}
-    .score{font-size:2rem;font-weight:950;letter-spacing:-.05em;min-width:92px}
-    .grade{font-size:.82rem;color:#dce8fb;font-weight:750}
-    .meter{height:8px;background:#1e304b;border-radius:999px;overflow:hidden;margin-top:6px}
-    .meter>div{height:100%;width:0;background:linear-gradient(90deg,#6ab8ff,#71e8ad);transition:width .3s ease}
-    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
-    .metric{border:1px solid #233c59;background:#0b192d;border-radius:12px;padding:9px}
-    .metric b{display:block;font-size:1rem;margin-top:2px}.metric span{font-size:.72rem;color:#9fb0c8}
-    .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:.75rem;color:#b8c7dc}
-    .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
-    .tip{margin-top:10px;border-left:3px solid var(--yellow);padding:8px 10px;background:rgba(255,209,102,.06);border-radius:8px;
-      color:#f8e8af;font-size:.8rem;line-height:1.4}
-    .result{display:none;margin-top:10px;padding:11px;border-radius:13px;border:1px solid #2c496b;background:#0d1e35;font-size:.85rem;line-height:1.45}
-    .result.show{display:block}
-    .footer{text-align:center;color:#77879e;font-size:.72rem;margin-top:12px}
-    .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,18px);opacity:0;pointer-events:none;transition:.22s;
-      max-width:min(92vw,560px);background:#0f2039;border:1px solid #355a80;color:#fff;padding:11px 14px;border-radius:13px;text-align:center;z-index:99}
-    .toast.show{opacity:1;transform:translate(-50%,0)}
-    .start-overlay{position:absolute;inset:12px;display:grid;place-items:center;border-radius:20px;background:rgba(4,9,18,.84);backdrop-filter:blur(8px);z-index:5}
-    .start-box{max-width:520px;text-align:center;padding:24px}.start-box h2{font-size:1.7rem;margin:0 0 8px}.start-box p{color:#bdc9dc;line-height:1.5;margin:0 0 16px}
-    .start-box .btn{min-width:220px}
-    @media(max-width:600px){
-      .app{padding:10px}.game-card{min-height:0;padding:8px}.side{padding:12px}.hud{left:18px;right:18px;top:17px}
-      .role-grid{grid-template-columns:1fr 1fr 1fr}.metrics{grid-template-columns:1fr 1fr}
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app">
-  <header>
+  <header class="topbar">
     <div>
       <h1>🔬 Misión Radioterapia</h1>
-      <p class="subtitle">Tu reto: primero identifica y contornea el tumor y los órganos a riesgo; después diseña un plan que concentre la radiación en el tumor y proteja tejido sano.</p>
+      <p id="subtitle">Forma parte del equipo: contornea, planea y evalúa a la paciente.</p>
     </div>
-    <div class="tag">Mujeres en la Ciencia · experiencia educativa</div>
+    <div class="tag">Mujeres en la Ciencia · V0.2</div>
   </header>
 
-  <div class="layout">
-    <section class="card game-card">
-      <canvas id="game" width="800" height="800" aria-label="Simulación educativa de radioterapia"></canvas>
-      <div class="hud">
-        <div class="pill" id="hudStep">Misión lista</div>
-        <div class="pill" id="hudBeams">0 / 5 haces</div>
+  <section id="casePicker" class="case-picker card">
+    <div class="eyebrow">Elige un caso</div>
+    <h2>¿Qué paciente quieres tratar?</h2>
+    <p class="muted">Cada caso cambia la anatomía, los órganos a riesgo y la toxicidad que deberá evaluar enfermería.</p>
+    <div class="case-grid">
+      <button class="case-card" data-case="head">
+        <span class="case-icon">🧠</span><b>Cabeza</b>
+        <small>Tumor intracraneal · ojos, quiasma, tronco, cócleas</small>
+      </button>
+      <button class="case-card" data-case="breast">
+        <span class="case-icon">🎗️</span><b>Mama izquierda</b>
+        <small>Corazón, pulmones, mama contralateral y médula</small>
+      </button>
+      <button class="case-card" data-case="cervix">
+        <span class="case-icon">🩷</span><b>Cérvix</b>
+        <small>Vejiga, recto, intestino y cabezas femorales</small>
+      </button>
+    </div>
+  </section>
+
+  <section id="gameShell" class="layout hidden">
+    <main class="card game-card">
+      <div class="role-tabs" aria-label="Roles del equipo">
+        <button class="role-tab active" data-role="doctor"><span>🩺</span>Doctora</button>
+        <button class="role-tab" data-role="physics"><span>⚛️</span>Física médica</button>
+        <button class="role-tab" data-role="nurse"><span>💙</span>Enfermería</button>
       </div>
-      <div class="start-overlay" id="startOverlay">
-        <div class="start-box">
-          <h2>¿Lista para entrar al equipo?</h2>
-          <p>Primero actuarás como oncóloga: identifica y contornea el tumor y los órganos a riesgo. Después pasarás a física médica para elegir los ángulos del tratamiento.</p>
-          <button class="btn primary" id="startBtn">Iniciar misión</button>
+
+      <div id="contourToolbar" class="contour-toolbar">
+        <div class="toolbar-title">Volumen a colorear</div>
+        <div id="structureSelector" class="structure-selector"></div>
+        <div class="brush-actions">
+          <button id="clearContourBtn" class="mini-btn">Borrar este contorno</button>
+          <button id="validateContourBtn" class="mini-btn primary">Validar contorno</button>
         </div>
       </div>
-    </section>
+
+      <div class="canvas-wrap">
+        <canvas id="game" width="800" height="800" aria-label="Tomografía y simulación educativa de radioterapia"></canvas>
+        <div class="hud">
+          <span class="pill" id="hudCase">Caso</span>
+          <span class="pill" id="hudStage">Doctora · contorneo</span>
+        </div>
+      </div>
+
+      <div id="nursingPanel" class="nursing-panel hidden">
+        <div class="nursing-head">
+          <div>
+            <div class="eyebrow">Rol de enfermería</div>
+            <h2>Evaluación de toxicidad por radiación</h2>
+          </div>
+          <span class="pill">Educativa</span>
+        </div>
+        <p id="nursingIntro" class="muted"></p>
+        <div id="toxicityQuestions" class="toxicity-list"></div>
+        <button id="evaluateNursingBtn" class="btn primary wide">Evaluar toxicidad</button>
+        <div id="nursingResult" class="result hidden"></div>
+      </div>
+    </main>
 
     <aside class="card side">
       <div class="section">
-        <h2>Tu equipo</h2>
-        <p class="small">La radioterapia es trabajo en equipo. Toca un rol para conocer su función.</p>
-        <div class="role-grid">
-          <button class="role active" data-role="medica"><span>🩺</span>Oncóloga</button>
-          <button class="role" data-role="fisica"><span>⚛️</span>Física</button>
-          <button class="role" data-role="enfermeria"><span>💙</span>Enfermería</button>
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Caso actual</div>
+            <h2 id="caseTitle">—</h2>
+          </div>
+          <button id="changeCaseBtn" class="mini-btn">Cambiar</button>
         </div>
-        <p id="roleText" class="small" style="margin-top:9px">Interpreta las imágenes, contornea el tumor y los órganos a riesgo, y define qué queremos tratar y proteger.</p>
+        <p id="caseText" class="muted"></p>
       </div>
 
-      <div class="section">
+      <div class="section" id="roleMission">
         <div class="mission">
-          <div class="mission-num">1</div>
-          <div><h2 style="margin-bottom:4px">Contorneo médico</h2>
-          <p id="contourPrompt">Busca y toca el <b style="color:#fff">tumor</b> en la tomografía. Iremos estructura por estructura.</p></div>
+          <div class="mission-num" id="missionNum">1</div>
+          <div>
+            <h2 id="missionTitle">Contorneo médico</h2>
+            <p id="missionText">Selecciona un volumen y coloréalo con el dedo sobre la tomografía.</p>
+          </div>
         </div>
-        <div class="beam-row" id="contourChips">
-          <span class="beam-chip" id="cTumor">Tumor · pendiente</span>
-          <span class="beam-chip" id="cEyeL">Ojo izq. · pendiente</span>
-          <span class="beam-chip" id="cEyeR">Ojo der. · pendiente</span>
-          <span class="beam-chip" id="cStem">Tronco · pendiente</span>
-        </div>
+        <div id="roleStatus" class="status-box"></div>
       </div>
 
-      <div class="section">
-        <div class="mission">
-          <div class="mission-num">2</div>
-          <div><h2 style="margin-bottom:4px">Planeación física</h2>
-          <p>Cuando termines el contorneo, toca el aro alrededor de la cabeza para colocar de 3 a 5 haces. Puedes <b style="color:#fff">arrastrar cada número</b> para cambiar su ángulo.</p></div>
+      <div class="section" id="physicsPanel">
+        <div class="section-head">
+          <h2>Planeación física</h2>
+          <span id="beamCount" class="pill">0 / 5 haces</span>
         </div>
-        <div class="beam-row" id="beamChips"></div>
-        <div class="buttons">
-          <button class="btn" id="undoBtn">↩ Deshacer</button>
-          <button class="btn warn" id="resetBtn">⟲ Reiniciar</button>
+        <p class="muted">Después de completar el contorneo, coloca entre 3 y 5 haces sobre el aro y arrástralos para ajustar sus ángulos.</p>
+        <div id="beamChips" class="beam-row"></div>
+        <div class="button-grid">
+          <button id="undoBtn" class="btn">↩ Deshacer</button>
+          <button id="resetPlanBtn" class="btn warn">⟲ Reiniciar haces</button>
+          <button id="evaluatePlanBtn" class="btn primary wide">✨ Evaluar plan</button>
+          <button id="hintBtn" class="btn wide">💡 Pista</button>
         </div>
-      </div>
 
-      <div class="section">
-        <div class="mission">
-          <div class="mission-num">3</div>
-          <div><h2 style="margin-bottom:4px">Analiza la dosis</h2>
-          <p>El mapa aparece en tiempo real. Cuando estés satisfecha, evalúa tu plan.</p></div>
-        </div>
-        <div class="buttons">
-          <button class="btn primary" id="evaluateBtn">✨ Evaluar plan</button>
-          <button class="btn" id="hintBtn">💡 Pista</button>
-        </div>
         <div class="score-wrap">
           <div class="score" id="score">—</div>
           <div>
-            <div class="grade" id="grade">Coloca al menos 3 haces.</div>
+            <div class="grade" id="grade">Completa primero el contorneo.</div>
             <div class="meter"><div id="meterFill"></div></div>
           </div>
         </div>
-        <div class="metrics">
-          <div class="metric"><span>Cobertura del tumor</span><b id="mTumor">—</b></div>
-          <div class="metric"><span>Dosis relativa a ojos</span><b id="mEyes">—</b></div>
-          <div class="metric"><span>Dosis relativa a tronco</span><b id="mStem">—</b></div>
-          <div class="metric"><span>Tejido sano</span><b id="mHealthy">—</b></div>
-        </div>
-        <div class="result" id="result"></div>
+        <div id="metrics" class="metrics"></div>
+        <div id="planResult" class="result hidden"></div>
       </div>
 
       <div class="section">
-        <h2>¿Qué estás viendo?</h2>
-        <div class="legend">
-          <span><i class="dot" style="background:#ff6b86"></i>Tumor</span>
-          <span><i class="dot" style="background:#67d9ff"></i>Ojos</span>
-          <span><i class="dot" style="background:#ffd166"></i>Tronco encefálico</span>
-          <span><i class="dot" style="background:#77efa9"></i>Dosis acumulada</span>
+        <h2>Progreso del equipo</h2>
+        <div class="progress-list">
+          <div><span>🩺 Doctora</span><b id="doctorProgress">En proceso</b></div>
+          <div><span>⚛️ Física médica</span><b id="physicsProgress">Bloqueado</b></div>
+          <div><span>💙 Enfermería</span><b id="nurseProgress">Bloqueado</b></div>
         </div>
-        <div class="tip">En la clínica real, un plan usa imágenes médicas, contornos 3D, algoritmos de cálculo de dosis, límites de seguridad y control de calidad. Aquí lo simplificamos para entender la idea.</div>
+      </div>
+
+      <div class="section educational-note">
+        <b>Importante</b>
+        <p>La app simplifica deliberadamente el contorneo, el cálculo de dosis y la valoración de toxicidad. No es un TPS, no reproduce una escala clínica completa y no debe usarse para decisiones médicas.</p>
       </div>
     </aside>
-  </div>
+  </section>
 
-  <div class="footer">Simulación educativa · No es un sistema de planeación clínica ni debe usarse para decisiones médicas.</div>
+  <footer>Simulación educativa de radioterapia · diseñada para iPad y navegador web.</footer>
 </div>
-<div class="toast" id="toast"></div>
-
-<script>
-(function(){
-"use strict";
-
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-const W = canvas.width, H = canvas.height;
-const CX = 400, CY = 414;
-const BODY_RX = 252, BODY_RY = 286, RING_R = 330;
-const MAX_BEAMS = 5, MIN_BEAMS = 3;
-const BEAM_SIGMA = 25;
-
-const tumor = {x: 455, y: 404, r: 43};
-const eyeL = {x: 323, y: 294, r: 28};
-const eyeR = {x: 477, y: 292, r: 28};
-const stem = {x: 392, y: 520, rx: 31, ry: 58};
-
-let beams = [];
-let dragging = -1;
-let started = false;
-let evaluated = false;
-let lastMetrics = null;
-let contourIndex = 0;
-const contourTargets = [
-  {key:"tumor", label:"tumor", x:tumor.x, y:tumor.y, hit:(x,y)=>Math.hypot(x-tumor.x,y-tumor.y)<=tumor.r+18},
-  {key:"eyeL", label:"ojo izquierdo", x:eyeL.x, y:eyeL.y, hit:(x,y)=>Math.hypot(x-eyeL.x,y-eyeL.y)<=eyeL.r+18},
-  {key:"eyeR", label:"ojo derecho", x:eyeR.x, y:eyeR.y, hit:(x,y)=>Math.hypot(x-eyeR.x,y-eyeR.y)<=eyeR.r+18},
-  {key:"stem", label:"tronco encefálico", x:stem.x, y:stem.y, hit:(x,y)=>(((x-stem.x)/(stem.rx+18))**2+((y-stem.y)/(stem.ry+18))**2)<=1}
-];
-const contoured = {tumor:false,eyeL:false,eyeR:false,stem:false};
-function contourComplete(){ return contourIndex>=contourTargets.length; }
-
-const roles = {
-  medica:"Interpreta las imágenes, contornea el tumor y los órganos a riesgo, y define qué queremos tratar y proteger.",
-  fisica:"Diseña y verifica cómo entregar la dosis prescrita de forma segura, precisa y medible.",
-  enfermeria:"Acompaña a la paciente, detecta síntomas, educa y coordina cuidados durante el tratamiento."
-};
-
-function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
-function normAngle(a){ while(a<0)a+=Math.PI*2; while(a>=Math.PI*2)a-=Math.PI*2; return a; }
-
-function sourceFor(angle){
-  return {x:CX+Math.cos(angle)*RING_R, y:CY+Math.sin(angle)*RING_R};
-}
-function beamGeometry(angle){
-  const s = sourceFor(angle);
-  let dx = tumor.x-s.x, dy = tumor.y-s.y;
-  const len = Math.hypot(dx,dy) || 1;
-  dx/=len; dy/=len;
-  return {sx:s.x,sy:s.y,ux:dx,uy:dy};
-}
-function lineDistance(px,py,g){
-  const vx=px-g.sx, vy=py-g.sy;
-  const t=vx*g.ux+vy*g.uy;
-  const qx=g.sx+t*g.ux, qy=g.sy+t*g.uy;
-  return Math.hypot(px-qx,py-qy);
-}
-function doseAt(x,y){
-  let d=0;
-  for(const a of beams){
-    const g=beamGeometry(a);
-    const dist=lineDistance(x,y,g);
-    d += Math.exp(-(dist*dist)/(2*BEAM_SIGMA*BEAM_SIGMA));
-  }
-  return d;
-}
-
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  drawBackground();
-  drawPatient();
-  drawDose();
-  drawStructures();
-  drawBeams();
-  drawLabels();
-}
-function drawBackground(){
-  const g=ctx.createRadialGradient(CX,CY,40,CX,CY,390);
-  g.addColorStop(0,"#18222f"); g.addColorStop(1,"#080d14");
-  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-  ctx.save(); ctx.strokeStyle="#2c4059";ctx.lineWidth=2;ctx.setLineDash([8,9]);
-  ctx.beginPath();ctx.arc(CX,CY,RING_R,0,Math.PI*2);ctx.stroke();ctx.restore();
-}
-function drawPatient(){
-  ctx.save();
-  ctx.beginPath();ctx.ellipse(CX,CY,BODY_RX,BODY_RY,0,0,Math.PI*2);ctx.clip();
-  let g=ctx.createRadialGradient(CX-55,CY-80,10,CX,CY,BODY_RY);
-  g.addColorStop(0,"#c8ccd2");g.addColorStop(.52,"#8b929a");g.addColorStop(1,"#596168");
-  ctx.fillStyle=g;ctx.fillRect(CX-BODY_RX-5,CY-BODY_RY-5,BODY_RX*2+10,BODY_RY*2+10);
-
-  ctx.fillStyle="rgba(118,124,132,.63)";
-  ctx.beginPath();ctx.ellipse(CX,CY-14,205,226,0,0,Math.PI*2);ctx.fill();
-
-  ctx.strokeStyle="rgba(238,242,247,.78)";ctx.lineWidth=18;
-  ctx.beginPath();ctx.ellipse(CX,CY,BODY_RX-13,BODY_RY-13,0,0,Math.PI*2);ctx.stroke();
-
-  ctx.fillStyle="rgba(47,54,63,.55)";
-  ctx.beginPath();ctx.ellipse(CX-32,CY-15,22,52,-.16,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.ellipse(CX+29,CY-15,22,52,.16,0,Math.PI*2);ctx.fill();
-  ctx.restore();
-
-  ctx.strokeStyle="#dbe1ea";ctx.lineWidth=3;
-  ctx.beginPath();ctx.ellipse(CX,CY,BODY_RX,BODY_RY,0,0,Math.PI*2);ctx.stroke();
-}
-function insideBody(x,y){
-  const nx=(x-CX)/BODY_RX, ny=(y-CY)/BODY_RY;
-  return nx*nx+ny*ny<=1;
-}
-function drawDose(){
-  if(beams.length===0)return;
-  ctx.save();
-  ctx.beginPath();ctx.ellipse(CX,CY,BODY_RX-4,BODY_RY-4,0,0,Math.PI*2);ctx.clip();
-  for(let y=CY-BODY_RY;y<=CY+BODY_RY;y+=6){
-    for(let x=CX-BODY_RX;x<=CX+BODY_RX;x+=6){
-      if(!insideBody(x,y))continue;
-      const d=doseAt(x,y);
-      if(d<.08)continue;
-      const normalized=d/Math.max(1,beams.length*.72);
-      let r=93,g=240,b=165,a=clamp(.08+d*.11,.08,.46);
-      if(normalized>.77){r=255;g=190;b=95;a=.50}
-      else if(normalized>.52){r=175;g=240;b=112;a=.44}
-      ctx.fillStyle=`rgba(${r},${g},${b},${a})`;
-      ctx.fillRect(x,y,7,7);
-    }
-  }
-  ctx.restore();
-}
-function circle(x,y,r,fill,stroke){
-  ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=3;
-  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();
-}
-function drawStructures(){
-  // Before a structure is contoured it is intentionally subtle, like anatomy on a scan.
-  circle(eyeL.x,eyeL.y,eyeL.r,contoured.eyeL?"rgba(103,217,255,.66)":"rgba(205,214,224,.16)",contoured.eyeL?"#a3edff":"rgba(235,240,247,.28)");
-  circle(eyeR.x,eyeR.y,eyeR.r,contoured.eyeR?"rgba(103,217,255,.66)":"rgba(205,214,224,.16)",contoured.eyeR?"#a3edff":"rgba(235,240,247,.28)");
-  ctx.fillStyle=contoured.stem?"rgba(255,209,102,.74)":"rgba(205,214,224,.15)";
-  ctx.strokeStyle=contoured.stem?"#ffe29b":"rgba(235,240,247,.25)";ctx.lineWidth=3;
-  ctx.beginPath();ctx.ellipse(stem.x,stem.y,stem.rx,stem.ry,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-  circle(tumor.x,tumor.y,tumor.r,contoured.tumor?"rgba(255,107,134,.78)":"rgba(230,235,241,.23)",contoured.tumor?"#ff9db0":"rgba(255,255,255,.35)");
-}
-function drawBeams(){
-  beams.forEach((a,i)=>{
-    const g=beamGeometry(a);
-    const length=RING_R*2.12;
-    const ex=g.sx+g.ux*length, ey=g.sy+g.uy*length;
-    const grad=ctx.createLinearGradient(g.sx,g.sy,ex,ey);
-    grad.addColorStop(0,"rgba(103,217,255,.82)");
-    grad.addColorStop(.46,"rgba(123,239,167,.42)");
-    grad.addColorStop(1,"rgba(183,147,255,.08)");
-    ctx.strokeStyle=grad;ctx.lineWidth=14;ctx.lineCap="round";
-    ctx.beginPath();ctx.moveTo(g.sx,g.sy);ctx.lineTo(ex,ey);ctx.stroke();
-
-    ctx.fillStyle=(dragging===i)?"#223c5c":"#091522";
-    ctx.strokeStyle=(dragging===i)?"#fff":"#87e8ff";
-    ctx.lineWidth=3;
-    ctx.beginPath();ctx.arc(g.sx,g.sy,19,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#ecfbff";ctx.font="800 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.fillText(String(i+1),g.sx,g.sy);
-  });
-  ctx.textAlign="start";ctx.textBaseline="alphabetic";
-}
-function drawLabels(){
-  ctx.font="700 15px system-ui";
-  if(contoured.tumor){ctx.fillStyle="#fff";ctx.fillText("Tumor",tumor.x+49,tumor.y+4);}
-  if(contoured.eyeL||contoured.eyeR){ctx.fillStyle="#d8f6ff";ctx.fillText("Ojos",eyeR.x+39,eyeR.y-4);}
-  if(contoured.stem){ctx.fillStyle="#fff0b7";ctx.fillText("Tronco",stem.x+42,stem.y+3);}
-  if(started && !contourComplete()){
-    const target=contourTargets[contourIndex];
-    ctx.fillStyle="rgba(8,15,26,.84)";ctx.strokeStyle="#38536f";ctx.lineWidth=1;
-    roundRect(150,690,500,54,15);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#d8e6f8";ctx.font="700 16px system-ui";ctx.textAlign="center";
-    ctx.fillText("Contornea: "+target.label,400,723);ctx.textAlign="start";
-  } else if(started && beams.length===0){
-    ctx.fillStyle="rgba(8,15,26,.82)";ctx.strokeStyle="#38536f";ctx.lineWidth=1;
-    roundRect(180,690,440,54,15);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#d8e6f8";ctx.font="700 16px system-ui";ctx.textAlign="center";
-    ctx.fillText("Toca el aro punteado para colocar tu primer haz",400,723);
-    ctx.textAlign="start";
-  }
-}
-function roundRect(x,y,w,h,r){
-  ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
-}
-
-function canvasPoint(e){
-  const rect=canvas.getBoundingClientRect();
-  return {x:(e.clientX-rect.left)*W/rect.width,y:(e.clientY-rect.top)*H/rect.height};
-}
-function nearestHandle(x,y){
-  let best=-1,bestD=1e9;
-  beams.forEach((a,i)=>{
-    const s=sourceFor(a), d=Math.hypot(x-s.x,y-s.y);
-    if(d<bestD){bestD=d;best=i}
-  });
-  return bestD<45?best:-1;
-}
-function angleFromPoint(x,y){ return normAngle(Math.atan2(y-CY,x-CX)); }
-
-function handleContourTap(x,y){
-  const target=contourTargets[contourIndex];
-  if(!target)return false;
-  if(target.hit(x,y)){
-    contoured[target.key]=true;
-    contourIndex++;
-    evaluated=false;lastMetrics=null;
-    if(contourComplete()){
-      toast("¡Contorneo completo! Ahora pasa a física médica y coloca los haces.");
-    }else{
-      toast("¡Bien! Ahora busca el "+contourTargets[contourIndex].label+".");
-    }
-    updateUI();draw();
-    return true;
-  }
-  toast("Ese no es el "+target.label+". Observa la anatomía e inténtalo otra vez.");
-  return false;
-}
-
-canvas.addEventListener("pointerdown",e=>{
-  if(!started)return;
-  e.preventDefault();
-  const p=canvasPoint(e);
-  if(!contourComplete()){ handleContourTap(p.x,p.y); return; }
-  const h=nearestHandle(p.x,p.y);
-  if(h>=0){
-    dragging=h;canvas.setPointerCapture?.(e.pointerId);draw();return;
-  }
-  const d=Math.hypot(p.x-CX,p.y-CY);
-  if(d>RING_R-65 && d<RING_R+70){
-    if(beams.length>=MAX_BEAMS){toast("Ya tienes 5 haces. Arrastra uno de los números si quieres cambiar su ángulo.");return;}
-    beams.push(angleFromPoint(p.x,p.y));evaluated=false;lastMetrics=null;updateUI();draw();
-  } else toast("Toca el aro punteado alrededor de la tomografía.");
-});
-canvas.addEventListener("pointermove",e=>{
-  if(dragging<0)return;
-  e.preventDefault();
-  const p=canvasPoint(e);
-  beams[dragging]=angleFromPoint(p.x,p.y);evaluated=false;lastMetrics=null;updateUI();draw();
-});
-function stopDrag(e){ if(dragging>=0){dragging=-1;updateUI();draw();} }
-canvas.addEventListener("pointerup",stopDrag);
-canvas.addEventListener("pointercancel",stopDrag);
-
-function circleMean(obj){
-  let total=0,n=0;
-  for(let ir=0;ir<=5;ir++){
-    const rr=obj.r*(ir/5);
-    const count=ir===0?1:16;
-    for(let k=0;k<count;k++){
-      const a=(Math.PI*2*k)/count;
-      total+=doseAt(obj.x+Math.cos(a)*rr,obj.y+Math.sin(a)*rr);n++;
-    }
-  }
-  return total/n;
-}
-function ellipseMean(obj){
-  let total=0,n=0;
-  for(let ir=0;ir<=5;ir++){
-    const rr=ir/5, count=ir===0?1:16;
-    for(let k=0;k<count;k++){
-      const a=(Math.PI*2*k)/count;
-      total+=doseAt(obj.x+Math.cos(a)*obj.rx*rr,obj.y+Math.sin(a)*obj.ry*rr);n++;
-    }
-  }
-  return total/n;
-}
-function healthyMean(){
-  let total=0,n=0;
-  for(let y=CY-BODY_RY+12;y<CY+BODY_RY-12;y+=22){
-    for(let x=CX-BODY_RX+12;x<CX+BODY_RX-12;x+=22){
-      if(!insideBody(x,y))continue;
-      const inT=Math.hypot(x-tumor.x,y-tumor.y)<tumor.r;
-      const inEL=Math.hypot(x-eyeL.x,y-eyeL.y)<eyeL.r;
-      const inER=Math.hypot(x-eyeR.x,y-eyeR.y)<eyeR.r;
-      const inS=((x-stem.x)/stem.rx)**2+((y-stem.y)/stem.ry)**2<1;
-      if(inT||inEL||inER||inS)continue;
-      total+=doseAt(x,y);n++;
-    }
-  }
-  return n?total/n:0;
-}
-function evaluate(){
-  if(beams.length<MIN_BEAMS){toast("Para evaluar el plan necesitas por lo menos 3 haces.");return;}
-  const t=circleMean(tumor), eyes=(circleMean(eyeL)+circleMean(eyeR))/2, st=ellipseMean(stem), healthy=healthyMean();
-  const expected=Math.max(1.9,beams.length*.62);
-  const coverage=clamp(t/expected*100,0,100);
-
-  // Educational score: reward tumor coverage and penalize OAR/healthy-tissue exposure.
-  const eyePenalty=Math.max(0,eyes-.42)*24;
-  const stemPenalty=Math.max(0,st-.58)*25;
-  const healthyPenalty=Math.max(0,healthy-.38)*20;
-  const spreadBonus=angularSpreadBonus()*10;
-  let score=Math.round(clamp(coverage-eyePenalty-stemPenalty-healthyPenalty+spreadBonus,0,100));
-
-  lastMetrics={t,eyes,st,healthy,coverage,score};
-  evaluated=true;updateUI();draw();
-}
-function angularSpreadBonus(){
-  if(beams.length<2)return 0;
-  const pts=beams.slice().sort((a,b)=>a-b);
-  let gaps=[];
-  for(let i=0;i<pts.length;i++){
-    const a=pts[i], b=(i===pts.length-1?pts[0]+Math.PI*2:pts[i+1]);
-    gaps.push(b-a);
-  }
-  const maxGap=Math.max(...gaps);
-  return clamp((Math.PI*1.35-maxGap)/(Math.PI*.7),0,1);
-}
-function updateUI(){
-  document.getElementById("hudBeams").textContent=contourComplete()?`${beams.length} / ${MAX_BEAMS} haces`:`${contourIndex} / ${contourTargets.length} contornos`;
-  document.getElementById("hudStep").textContent=!contourComplete()?"Paso 1 · contorneo":beams.length===0?"Paso 2 · coloca haces":evaluated?"Plan evaluado":beams.length<3?"Paso 2 · sigue colocando":"Paso 3 · ajusta y evalúa";
-
-  const contourIds={tumor:"cTumor",eyeL:"cEyeL",eyeR:"cEyeR",stem:"cStem"};
-  const contourLabels={tumor:"Tumor",eyeL:"Ojo izq.",eyeR:"Ojo der.",stem:"Tronco"};
-  Object.keys(contourIds).forEach(key=>{
-    const el=document.getElementById(contourIds[key]);
-    el.textContent=contourLabels[key]+" · "+(contoured[key]?"✓":"pendiente");
-  });
-  const prompt=document.getElementById("contourPrompt");
-  if(contourComplete()) prompt.innerHTML='<b style="color:#9dffb0">Contorneo completo ✓</b> Ya definiste el blanco y los órganos a riesgo.';
-  else prompt.innerHTML='Busca y toca el <b style="color:#fff">'+contourTargets[contourIndex].label+'</b> en la tomografía.';
-
-  const chips=document.getElementById("beamChips");
-  chips.innerHTML="";
-  if(!beams.length){
-    const c=document.createElement("span");c.className="beam-chip";c.textContent="Aún no hay haces";chips.appendChild(c);
-  } else {
-    beams.forEach((a,i)=>{
-      const c=document.createElement("span");c.className="beam-chip";
-      c.textContent=`Haz ${i+1}: ${Math.round(normAngle(a)*180/Math.PI)}°`;chips.appendChild(c);
-    });
-  }
-  document.getElementById("undoBtn").disabled=!beams.length || !contourComplete();
-  document.getElementById("evaluateBtn").disabled=!contourComplete() || beams.length<MIN_BEAMS;
-
-  if(!lastMetrics){
-    document.getElementById("score").textContent="—";
-    document.getElementById("grade").textContent=!contourComplete()?"Completa primero el contorneo.":beams.length<MIN_BEAMS?"Coloca al menos 3 haces.":"Listo para evaluar.";
-    document.getElementById("meterFill").style.width="0%";
-    ["mTumor","mEyes","mStem","mHealthy"].forEach(id=>document.getElementById(id).textContent="—");
-    document.getElementById("result").classList.remove("show");
-    return;
-  }
-  const m=lastMetrics;
-  document.getElementById("score").textContent=m.score;
-  document.getElementById("meterFill").style.width=m.score+"%";
-  document.getElementById("mTumor").textContent=Math.round(m.coverage)+"%";
-  document.getElementById("mEyes").textContent=m.eyes.toFixed(2);
-  document.getElementById("mStem").textContent=m.st.toFixed(2);
-  document.getElementById("mHealthy").textContent=m.healthy.toFixed(2);
-
-  let grade, message;
-  if(m.score>=88){grade="Excelente plan";message="Lograste concentrar bien la dosis en el tumor y distribuir las entradas para proteger estructuras sanas. En un equipo real, ahora vendrían la revisión clínica y el control de calidad.";}
-  else if(m.score>=72){grade="Buen plan";message="La cobertura es buena, pero todavía puedes mejorar la distribución de los ángulos. Prueba mover un haz que atraviese un órgano sensible.";}
-  else if(m.score>=55){grade="Plan mejorable";message="Estás alcanzando el tumor, pero parte de la dosis está pasando por estructuras que queremos proteger. Observa los ojos y el tronco encefálico y cambia los ángulos.";}
-  else{grade="Inténtalo de nuevo";message="La radiación llega al tumor, pero el costo para tejido sano es alto. Distribuye los haces alrededor de la paciente y evita repetir trayectorias similares.";}
-  document.getElementById("grade").textContent=grade;
-  const result=document.getElementById("result");result.textContent=message;result.classList.add("show");
-}
-
-document.getElementById("startBtn").addEventListener("click",()=>{
-  started=true;document.getElementById("startOverlay").style.display="none";updateUI();draw();toast("Primero: encuentra y toca el tumor para contornearlo.");
-});
-document.getElementById("undoBtn").addEventListener("click",()=>{beams.pop();evaluated=false;lastMetrics=null;updateUI();draw();});
-document.getElementById("resetBtn").addEventListener("click",()=>{beams=[];dragging=-1;evaluated=false;lastMetrics=null;contourIndex=0;Object.keys(contoured).forEach(k=>contoured[k]=false);updateUI();draw();toast("Caso reiniciado desde el contorneo.");});
-document.getElementById("evaluateBtn").addEventListener("click",evaluate);
-document.getElementById("hintBtn").addEventListener("click",()=>{if(!contourComplete())toast("Pista: busca la estructura que te pide la pantalla. Cuando la selecciones, aparecerá coloreada y contorneada.");else toast("Pista: usa varios ángulos alrededor de la cabeza y evita que muchos haces entren directamente por los ojos o el tronco encefálico.");});
-document.querySelectorAll(".role").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll(".role").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
-  document.getElementById("roleText").textContent=roles[btn.dataset.role];
-}));
-
-function toast(msg){
-  const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2500);
-}
-
-updateUI();draw();
-})();
-</script>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
 </body>
 </html>
