@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#07111f">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Misión Radioterapia</title>
+  <title>Misión Radioterapia · Mama izquierda</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,92 +13,101 @@
   <header class="topbar">
     <div>
       <h1>🔬 Misión Radioterapia</h1>
-      <p id="subtitle">Forma parte del equipo: contornea, planea y evalúa a la paciente.</p>
+      <p class="subtitle">Caso activo: <b>Mama izquierda</b>. Trabaja como Doctora, Física médica y Enfermería.</p>
     </div>
-    <div class="tag">Mujeres en la Ciencia · V0.2</div>
+    <div class="top-actions">
+      <button id="teacherBtn" class="mini-btn">👩‍🏫 Modo profesor</button>
+      <span class="tag">Mujeres en la Ciencia · V0.3</span>
+    </div>
   </header>
 
-  <section id="casePicker" class="case-picker card">
-    <div class="eyebrow">Elige un caso</div>
-    <h2>¿Qué paciente quieres tratar?</h2>
-    <p class="muted">Cada caso cambia la anatomía, los órganos a riesgo y la toxicidad que deberá evaluar enfermería.</p>
-    <div class="case-grid">
-      <button class="case-card" data-case="head">
-        <span class="case-icon">🧠</span><b>Cabeza</b>
-        <small>Tumor intracraneal · ojos, quiasma, tronco, cócleas</small>
-      </button>
-      <button class="case-card" data-case="breast">
-        <span class="case-icon">🎗️</span><b>Mama izquierda</b>
-        <small>Corazón, pulmones, mama contralateral y médula</small>
-      </button>
-      <button class="case-card" data-case="cervix">
-        <span class="case-icon">🩷</span><b>Cérvix</b>
-        <small>Vejiga, recto, intestino y cabezas femorales</small>
-      </button>
-    </div>
-  </section>
-
-  <section id="gameShell" class="layout hidden">
+  <section class="layout">
     <main class="card game-card">
-      <div class="role-tabs" aria-label="Roles del equipo">
+      <div class="role-tabs">
         <button class="role-tab active" data-role="doctor"><span>🩺</span>Doctora</button>
-        <button class="role-tab" data-role="physics"><span>⚛️</span>Física médica</button>
-        <button class="role-tab" data-role="nurse"><span>💙</span>Enfermería</button>
+        <button class="role-tab locked" data-role="physics"><span>⚛️</span>Física médica</button>
+        <button class="role-tab locked" data-role="nurse"><span>💙</span>Enfermería</button>
       </div>
 
-      <div id="contourToolbar" class="contour-toolbar">
-        <div class="toolbar-title">Volumen a colorear</div>
-        <div id="structureSelector" class="structure-selector"></div>
-        <div class="brush-actions">
-          <button id="clearContourBtn" class="mini-btn">Borrar este contorno</button>
-          <button id="validateContourBtn" class="mini-btn primary">Validar contorno</button>
+      <div id="doctorToolbar" class="toolbar">
+        <div>
+          <div class="eyebrow">Volumen a colorear</div>
+          <div id="structureSelector" class="structure-selector"></div>
+        </div>
+        <div>
+          <div class="eyebrow">Acciones</div>
+          <div class="toolbar-actions">
+            <button id="clearContourBtn" class="mini-btn">Borrar</button>
+            <button id="validateContourBtn" class="mini-btn primary">Validar contorno</button>
+          </div>
         </div>
       </div>
 
-      <div class="canvas-wrap">
-        <canvas id="game" width="800" height="800" aria-label="Tomografía y simulación educativa de radioterapia"></canvas>
+      <div id="teacherPanel" class="teacher-panel hidden">
+        <div>
+          <div class="eyebrow">Modo profesor</div>
+          <label class="checkline"><input id="showTruthChk" type="checkbox"> Mostrar contornos de referencia</label>
+          <div class="tiny muted">Selecciona arriba la estructura que quieras editar.</div>
+        </div>
+        <div>
+          <div class="eyebrow">Editar referencia</div>
+          <div class="teacher-actions">
+            <button class="mini-btn shift-btn" data-dx="-5" data-dy="0">←</button>
+            <button class="mini-btn shift-btn" data-dx="0" data-dy="-5">↑</button>
+            <button class="mini-btn shift-btn" data-dx="0" data-dy="5">↓</button>
+            <button class="mini-btn shift-btn" data-dx="5" data-dy="0">→</button>
+            <button class="mini-btn scale-btn" data-scale="0.94">− tamaño</button>
+            <button class="mini-btn scale-btn" data-scale="1.06">+ tamaño</button>
+            <button id="saveTeacherBtn" class="mini-btn primary">Guardar en este iPad</button>
+            <button id="resetTeacherBtn" class="mini-btn">Restaurar referencias</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="canvasWrap" class="canvas-wrap">
+        <canvas id="game" width="900" height="900" aria-label="CT axial de tórax para simulación educativa de radioterapia de mama"></canvas>
         <div class="hud">
-          <span class="pill" id="hudCase">Caso</span>
-          <span class="pill" id="hudStage">Doctora · contorneo</span>
+          <span class="pill">Mama izquierda</span>
+          <span id="hudStage" class="pill">Doctora · contorneo</span>
         </div>
       </div>
 
-      <div id="nursingPanel" class="nursing-panel hidden">
-        <div class="nursing-head">
+      <div id="nursePanel" class="nurse-panel hidden">
+        <div class="section-head">
           <div>
-            <div class="eyebrow">Rol de enfermería</div>
+            <div class="eyebrow">Enfermería</div>
             <h2>Evaluación de toxicidad por radiación</h2>
           </div>
-          <span class="pill">Educativa</span>
+          <span class="pill">Seguimiento</span>
         </div>
-        <p id="nursingIntro" class="muted"></p>
-        <div id="toxicityQuestions" class="toxicity-list"></div>
-        <button id="evaluateNursingBtn" class="btn primary wide">Evaluar toxicidad</button>
-        <div id="nursingResult" class="result hidden"></div>
+        <p class="muted">Asigna un grado educativo de severidad (0–3) a cada escenario.</p>
+        <div id="toxicityList" class="toxicity-list"></div>
+        <button id="evaluateNurseBtn" class="btn primary wide">Evaluar toxicidad</button>
+        <div id="nurseResult" class="result hidden"></div>
+      </div>
+
+      <div class="image-credit">
+        CT anatómica de referencia: Hellerhoff, Wikimedia Commons, CC BY-SA 4.0. Contornos, lesión y simulación añadidos con fines educativos.
       </div>
     </main>
 
     <aside class="card side">
       <div class="section">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Caso actual</div>
-            <h2 id="caseTitle">—</h2>
-          </div>
-          <button id="changeCaseBtn" class="mini-btn">Cambiar</button>
-        </div>
-        <p id="caseText" class="muted"></p>
+        <div class="eyebrow">Caso actual</div>
+        <h2>Mama izquierda</h2>
+        <p class="muted">Identifica y contornea el <b>tumor</b> y cinco órganos a riesgo: corazón, pulmón izquierdo, pulmón derecho, mama derecha y médula espinal.</p>
+        <div class="orientation-note"><b>Orientación radiológica:</b> izquierda de la pantalla = derecha de la paciente; derecha de la pantalla = izquierda de la paciente.</div>
       </div>
 
-      <div class="section" id="roleMission">
+      <div class="section">
         <div class="mission">
-          <div class="mission-num" id="missionNum">1</div>
+          <div id="missionNum" class="mission-num">1</div>
           <div>
             <h2 id="missionTitle">Contorneo médico</h2>
-            <p id="missionText">Selecciona un volumen y coloréalo con el dedo sobre la tomografía.</p>
+            <p id="missionText">Elige una estructura, coloréala con el dedo y valida el resultado.</p>
           </div>
         </div>
-        <div id="roleStatus" class="status-box"></div>
+        <div id="statusBox" class="status-box"></div>
       </div>
 
       <div class="section" id="physicsPanel">
@@ -106,19 +115,18 @@
           <h2>Planeación física</h2>
           <span id="beamCount" class="pill">0 / 5 haces</span>
         </div>
-        <p class="muted">Después de completar el contorneo, coloca entre 3 y 5 haces sobre el aro y arrástralos para ajustar sus ángulos.</p>
+        <p class="muted">Al terminar el contorneo, coloca de 3 a 5 haces sobre el aro. Arrastra los números para cambiar sus ángulos.</p>
         <div id="beamChips" class="beam-row"></div>
         <div class="button-grid">
-          <button id="undoBtn" class="btn">↩ Deshacer</button>
-          <button id="resetPlanBtn" class="btn warn">⟲ Reiniciar haces</button>
+          <button id="undoBeamBtn" class="btn">↩ Deshacer</button>
+          <button id="resetBeamBtn" class="btn warn">⟲ Reiniciar haces</button>
           <button id="evaluatePlanBtn" class="btn primary wide">✨ Evaluar plan</button>
           <button id="hintBtn" class="btn wide">💡 Pista</button>
         </div>
-
         <div class="score-wrap">
-          <div class="score" id="score">—</div>
+          <div id="score" class="score">—</div>
           <div>
-            <div class="grade" id="grade">Completa primero el contorneo.</div>
+            <div id="grade" class="grade">Completa primero el contorneo.</div>
             <div class="meter"><div id="meterFill"></div></div>
           </div>
         </div>
@@ -129,21 +137,35 @@
       <div class="section">
         <h2>Progreso del equipo</h2>
         <div class="progress-list">
-          <div><span>🩺 Doctora</span><b id="doctorProgress">En proceso</b></div>
+          <div><span>🩺 Doctora</span><b id="doctorProgress">0/6</b></div>
           <div><span>⚛️ Física médica</span><b id="physicsProgress">Bloqueado</b></div>
           <div><span>💙 Enfermería</span><b id="nurseProgress">Bloqueado</b></div>
         </div>
       </div>
 
-      <div class="section educational-note">
-        <b>Importante</b>
-        <p>La app simplifica deliberadamente el contorneo, el cálculo de dosis y la valoración de toxicidad. No es un TPS, no reproduce una escala clínica completa y no debe usarse para decisiones médicas.</p>
+      <div class="section note">
+        <b>Simulación educativa</b>
+        <p>No es un TPS ni una escala clínica completa. Los contornos y la dosis están simplificados para enseñar el flujo multidisciplinario.</p>
       </div>
     </aside>
   </section>
 
-  <footer>Simulación educativa de radioterapia · diseñada para iPad y navegador web.</footer>
+  <footer>Simulación educativa · No debe utilizarse para decisiones clínicas.</footer>
 </div>
+
+<div id="teacherModal" class="modal hidden">
+  <div class="modal-card">
+    <h2>Modo profesor</h2>
+    <p class="muted">Habilita referencias y edición local de los volúmenes.</p>
+    <label class="field">Usuario<input id="teacherUser" type="text" autocomplete="username"></label>
+    <label class="field">Password<input id="teacherPass" type="password" autocomplete="current-password"></label>
+    <div class="modal-actions">
+      <button id="teacherCancelBtn" class="btn">Cancelar</button>
+      <button id="teacherLoginBtn" class="btn primary">Entrar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 <script src="app.js"></script>
 </body>
