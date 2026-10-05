@@ -1,0 +1,8 @@
+{
+  "name": "mision-radioterapia",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@vercel/blob": "latest"
+  }
+}
