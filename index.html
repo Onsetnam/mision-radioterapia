@@ -86,7 +86,7 @@
   <header>
     <div>
       <h1>🔬 Misión Radioterapia</h1>
-      <p class="subtitle">Tu reto: elegir los ángulos de tratamiento para concentrar la radiación en el tumor y reducir la dosis en órganos sanos.</p>
+      <p class="subtitle">Tu reto: primero identifica y contornea el tumor y los órganos a riesgo; después diseña un plan que concentre la radiación en el tumor y proteja tejido sano.</p>
     </div>
     <div class="tag">Mujeres en la Ciencia · experiencia educativa</div>
   </header>
@@ -100,8 +100,8 @@
       </div>
       <div class="start-overlay" id="startOverlay">
         <div class="start-box">
-          <h2>¿Lista para planear?</h2>
-          <p>Coloca haces alrededor de la paciente. Todos apuntarán al tumor; tu trabajo es escoger ángulos que eviten en lo posible los órganos sensibles.</p>
+          <h2>¿Lista para entrar al equipo?</h2>
+          <p>Primero actuarás como oncóloga: identifica y contornea el tumor y los órganos a riesgo. Después pasarás a física médica para elegir los ángulos del tratamiento.</p>
           <button class="btn primary" id="startBtn">Iniciar misión</button>
         </div>
       </div>
@@ -116,14 +116,28 @@
           <button class="role" data-role="fisica"><span>⚛️</span>Física</button>
           <button class="role" data-role="enfermeria"><span>💙</span>Enfermería</button>
         </div>
-        <p id="roleText" class="small" style="margin-top:9px">Identifica el tumor, define el objetivo clínico y los órganos que debemos proteger.</p>
+        <p id="roleText" class="small" style="margin-top:9px">Interpreta las imágenes, contornea el tumor y los órganos a riesgo, y define qué queremos tratar y proteger.</p>
       </div>
 
       <div class="section">
         <div class="mission">
           <div class="mission-num">1</div>
-          <div><h2 style="margin-bottom:4px">Coloca de 3 a 5 haces</h2>
-          <p>Toca el aro alrededor de la cabeza. Después puedes <b style="color:#fff">arrastrar cada número</b> para cambiar su ángulo.</p></div>
+          <div><h2 style="margin-bottom:4px">Contorneo médico</h2>
+          <p id="contourPrompt">Busca y toca el <b style="color:#fff">tumor</b> en la tomografía. Iremos estructura por estructura.</p></div>
+        </div>
+        <div class="beam-row" id="contourChips">
+          <span class="beam-chip" id="cTumor">Tumor · pendiente</span>
+          <span class="beam-chip" id="cEyeL">Ojo izq. · pendiente</span>
+          <span class="beam-chip" id="cEyeR">Ojo der. · pendiente</span>
+          <span class="beam-chip" id="cStem">Tronco · pendiente</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="mission">
+          <div class="mission-num">2</div>
+          <div><h2 style="margin-bottom:4px">Planeación física</h2>
+          <p>Cuando termines el contorneo, toca el aro alrededor de la cabeza para colocar de 3 a 5 haces. Puedes <b style="color:#fff">arrastrar cada número</b> para cambiar su ángulo.</p></div>
         </div>
         <div class="beam-row" id="beamChips"></div>
         <div class="buttons">
@@ -134,7 +148,7 @@
 
       <div class="section">
         <div class="mission">
-          <div class="mission-num">2</div>
+          <div class="mission-num">3</div>
           <div><h2 style="margin-bottom:4px">Analiza la dosis</h2>
           <p>El mapa aparece en tiempo real. Cuando estés satisfecha, evalúa tu plan.</p></div>
         </div>
@@ -197,9 +211,18 @@ let dragging = -1;
 let started = false;
 let evaluated = false;
 let lastMetrics = null;
+let contourIndex = 0;
+const contourTargets = [
+  {key:"tumor", label:"tumor", x:tumor.x, y:tumor.y, hit:(x,y)=>Math.hypot(x-tumor.x,y-tumor.y)<=tumor.r+18},
+  {key:"eyeL", label:"ojo izquierdo", x:eyeL.x, y:eyeL.y, hit:(x,y)=>Math.hypot(x-eyeL.x,y-eyeL.y)<=eyeL.r+18},
+  {key:"eyeR", label:"ojo derecho", x:eyeR.x, y:eyeR.y, hit:(x,y)=>Math.hypot(x-eyeR.x,y-eyeR.y)<=eyeR.r+18},
+  {key:"stem", label:"tronco encefálico", x:stem.x, y:stem.y, hit:(x,y)=>(((x-stem.x)/(stem.rx+18))**2+((y-stem.y)/(stem.ry+18))**2)<=1}
+];
+const contoured = {tumor:false,eyeL:false,eyeR:false,stem:false};
+function contourComplete(){ return contourIndex>=contourTargets.length; }
 
 const roles = {
-  medica:"Identifica el tumor, define el objetivo clínico y los órganos que debemos proteger.",
+  medica:"Interpreta las imágenes, contornea el tumor y los órganos a riesgo, y define qué queremos tratar y proteger.",
   fisica:"Diseña y verifica cómo entregar la dosis prescrita de forma segura, precisa y medible.",
   enfermeria:"Acompaña a la paciente, detecta síntomas, educa y coordina cuidados durante el tratamiento."
 };
@@ -298,11 +321,13 @@ function circle(x,y,r,fill,stroke){
   ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();
 }
 function drawStructures(){
-  circle(eyeL.x,eyeL.y,eyeL.r,"rgba(103,217,255,.66)","#a3edff");
-  circle(eyeR.x,eyeR.y,eyeR.r,"rgba(103,217,255,.66)","#a3edff");
-  ctx.fillStyle="rgba(255,209,102,.74)";ctx.strokeStyle="#ffe29b";ctx.lineWidth=3;
+  // Before a structure is contoured it is intentionally subtle, like anatomy on a scan.
+  circle(eyeL.x,eyeL.y,eyeL.r,contoured.eyeL?"rgba(103,217,255,.66)":"rgba(205,214,224,.16)",contoured.eyeL?"#a3edff":"rgba(235,240,247,.28)");
+  circle(eyeR.x,eyeR.y,eyeR.r,contoured.eyeR?"rgba(103,217,255,.66)":"rgba(205,214,224,.16)",contoured.eyeR?"#a3edff":"rgba(235,240,247,.28)");
+  ctx.fillStyle=contoured.stem?"rgba(255,209,102,.74)":"rgba(205,214,224,.15)";
+  ctx.strokeStyle=contoured.stem?"#ffe29b":"rgba(235,240,247,.25)";ctx.lineWidth=3;
   ctx.beginPath();ctx.ellipse(stem.x,stem.y,stem.rx,stem.ry,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-  circle(tumor.x,tumor.y,tumor.r,"rgba(255,107,134,.78)","#ff9db0");
+  circle(tumor.x,tumor.y,tumor.r,contoured.tumor?"rgba(255,107,134,.78)":"rgba(230,235,241,.23)",contoured.tumor?"#ff9db0":"rgba(255,255,255,.35)");
 }
 function drawBeams(){
   beams.forEach((a,i)=>{
@@ -327,10 +352,16 @@ function drawBeams(){
 }
 function drawLabels(){
   ctx.font="700 15px system-ui";
-  ctx.fillStyle="#fff";ctx.fillText("Tumor",tumor.x+49,tumor.y+4);
-  ctx.fillStyle="#d8f6ff";ctx.fillText("Ojos",eyeR.x+39,eyeR.y-4);
-  ctx.fillStyle="#fff0b7";ctx.fillText("Tronco",stem.x+42,stem.y+3);
-  if(started && beams.length===0){
+  if(contoured.tumor){ctx.fillStyle="#fff";ctx.fillText("Tumor",tumor.x+49,tumor.y+4);}
+  if(contoured.eyeL||contoured.eyeR){ctx.fillStyle="#d8f6ff";ctx.fillText("Ojos",eyeR.x+39,eyeR.y-4);}
+  if(contoured.stem){ctx.fillStyle="#fff0b7";ctx.fillText("Tronco",stem.x+42,stem.y+3);}
+  if(started && !contourComplete()){
+    const target=contourTargets[contourIndex];
+    ctx.fillStyle="rgba(8,15,26,.84)";ctx.strokeStyle="#38536f";ctx.lineWidth=1;
+    roundRect(150,690,500,54,15);ctx.fill();ctx.stroke();
+    ctx.fillStyle="#d8e6f8";ctx.font="700 16px system-ui";ctx.textAlign="center";
+    ctx.fillText("Contornea: "+target.label,400,723);ctx.textAlign="start";
+  } else if(started && beams.length===0){
     ctx.fillStyle="rgba(8,15,26,.82)";ctx.strokeStyle="#38536f";ctx.lineWidth=1;
     roundRect(180,690,440,54,15);ctx.fill();ctx.stroke();
     ctx.fillStyle="#d8e6f8";ctx.font="700 16px system-ui";ctx.textAlign="center";
@@ -357,10 +388,30 @@ function nearestHandle(x,y){
 }
 function angleFromPoint(x,y){ return normAngle(Math.atan2(y-CY,x-CX)); }
 
+function handleContourTap(x,y){
+  const target=contourTargets[contourIndex];
+  if(!target)return false;
+  if(target.hit(x,y)){
+    contoured[target.key]=true;
+    contourIndex++;
+    evaluated=false;lastMetrics=null;
+    if(contourComplete()){
+      toast("¡Contorneo completo! Ahora pasa a física médica y coloca los haces.");
+    }else{
+      toast("¡Bien! Ahora busca el "+contourTargets[contourIndex].label+".");
+    }
+    updateUI();draw();
+    return true;
+  }
+  toast("Ese no es el "+target.label+". Observa la anatomía e inténtalo otra vez.");
+  return false;
+}
+
 canvas.addEventListener("pointerdown",e=>{
   if(!started)return;
   e.preventDefault();
   const p=canvasPoint(e);
+  if(!contourComplete()){ handleContourTap(p.x,p.y); return; }
   const h=nearestHandle(p.x,p.y);
   if(h>=0){
     dragging=h;canvas.setPointerCapture?.(e.pointerId);draw();return;
@@ -447,8 +498,18 @@ function angularSpreadBonus(){
   return clamp((Math.PI*1.35-maxGap)/(Math.PI*.7),0,1);
 }
 function updateUI(){
-  document.getElementById("hudBeams").textContent=`${beams.length} / ${MAX_BEAMS} haces`;
-  document.getElementById("hudStep").textContent=beams.length===0?"Paso 1 · coloca haces":evaluated?"Plan evaluado":beams.length<3?"Paso 1 · sigue colocando":"Paso 2 · ajusta y evalúa";
+  document.getElementById("hudBeams").textContent=contourComplete()?`${beams.length} / ${MAX_BEAMS} haces`:`${contourIndex} / ${contourTargets.length} contornos`;
+  document.getElementById("hudStep").textContent=!contourComplete()?"Paso 1 · contorneo":beams.length===0?"Paso 2 · coloca haces":evaluated?"Plan evaluado":beams.length<3?"Paso 2 · sigue colocando":"Paso 3 · ajusta y evalúa";
+
+  const contourIds={tumor:"cTumor",eyeL:"cEyeL",eyeR:"cEyeR",stem:"cStem"};
+  const contourLabels={tumor:"Tumor",eyeL:"Ojo izq.",eyeR:"Ojo der.",stem:"Tronco"};
+  Object.keys(contourIds).forEach(key=>{
+    const el=document.getElementById(contourIds[key]);
+    el.textContent=contourLabels[key]+" · "+(contoured[key]?"✓":"pendiente");
+  });
+  const prompt=document.getElementById("contourPrompt");
+  if(contourComplete()) prompt.innerHTML='<b style="color:#9dffb0">Contorneo completo ✓</b> Ya definiste el blanco y los órganos a riesgo.';
+  else prompt.innerHTML='Busca y toca el <b style="color:#fff">'+contourTargets[contourIndex].label+'</b> en la tomografía.';
 
   const chips=document.getElementById("beamChips");
   chips.innerHTML="";
@@ -460,12 +521,12 @@ function updateUI(){
       c.textContent=`Haz ${i+1}: ${Math.round(normAngle(a)*180/Math.PI)}°`;chips.appendChild(c);
     });
   }
-  document.getElementById("undoBtn").disabled=!beams.length;
-  document.getElementById("evaluateBtn").disabled=beams.length<MIN_BEAMS;
+  document.getElementById("undoBtn").disabled=!beams.length || !contourComplete();
+  document.getElementById("evaluateBtn").disabled=!contourComplete() || beams.length<MIN_BEAMS;
 
   if(!lastMetrics){
     document.getElementById("score").textContent="—";
-    document.getElementById("grade").textContent=beams.length<MIN_BEAMS?"Coloca al menos 3 haces.":"Listo para evaluar.";
+    document.getElementById("grade").textContent=!contourComplete()?"Completa primero el contorneo.":beams.length<MIN_BEAMS?"Coloca al menos 3 haces.":"Listo para evaluar.";
     document.getElementById("meterFill").style.width="0%";
     ["mTumor","mEyes","mStem","mHealthy"].forEach(id=>document.getElementById(id).textContent="—");
     document.getElementById("result").classList.remove("show");
@@ -489,12 +550,12 @@ function updateUI(){
 }
 
 document.getElementById("startBtn").addEventListener("click",()=>{
-  started=true;document.getElementById("startOverlay").style.display="none";updateUI();draw();toast("Toca el aro punteado para colocar un haz.");
+  started=true;document.getElementById("startOverlay").style.display="none";updateUI();draw();toast("Primero: encuentra y toca el tumor para contornearlo.");
 });
 document.getElementById("undoBtn").addEventListener("click",()=>{beams.pop();evaluated=false;lastMetrics=null;updateUI();draw();});
-document.getElementById("resetBtn").addEventListener("click",()=>{beams=[];dragging=-1;evaluated=false;lastMetrics=null;updateUI();draw();toast("Plan reiniciado.");});
+document.getElementById("resetBtn").addEventListener("click",()=>{beams=[];dragging=-1;evaluated=false;lastMetrics=null;contourIndex=0;Object.keys(contoured).forEach(k=>contoured[k]=false);updateUI();draw();toast("Caso reiniciado desde el contorneo.");});
 document.getElementById("evaluateBtn").addEventListener("click",evaluate);
-document.getElementById("hintBtn").addEventListener("click",()=>toast("Pista: usa varios ángulos alrededor de la cabeza y evita que muchos haces entren directamente por los ojos o el tronco encefálico."));
+document.getElementById("hintBtn").addEventListener("click",()=>{if(!contourComplete())toast("Pista: busca la estructura que te pide la pantalla. Cuando la selecciones, aparecerá coloreada y contorneada.");else toast("Pista: usa varios ángulos alrededor de la cabeza y evita que muchos haces entren directamente por los ojos o el tronco encefálico.");});
 document.querySelectorAll(".role").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll(".role").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
   document.getElementById("roleText").textContent=roles[btn.dataset.role];
