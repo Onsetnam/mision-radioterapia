@@ -3,22 +3,28 @@
 Juego educativo web para una actividad de **Mujeres en la Ciencia**.
 
 ## Objetivo
-Mostrar de forma visual y breve el principio de la planeación en radioterapia:
-concentrar dosis en el tumor mientras se reduce la exposición de órganos sanos.
+
+Mostrar de forma visual y breve uno de los principios centrales de la planeación en radioterapia: concentrar la dosis en el tumor mientras se reduce la exposición de órganos sanos.
+
+## Estado
+
+Prototipo en desarrollo.
+
+La experiencia está pensada para funcionar desde Safari en iPad y posteriormente publicarse como un sitio web accesible mediante QR.
 
 ## Cómo jugar
-1. Abrir la página en un navegador web.
-2. Pulsar **Iniciar misión**.
-3. Tocar el aro punteado para colocar entre 3 y 5 haces.
-4. Arrastrar los números de cada haz alrededor del aro para cambiar el ángulo.
-5. Pulsar **Evaluar plan**.
-6. Intentar aumentar el score protegiendo ojos, tronco encefálico y tejido sano.
 
-## iPad
-La interacción está preparada para Safari/iPadOS y controles táctiles.
+1. Inicia la misión.
+2. Coloca entre 3 y 5 haces alrededor de la paciente.
+3. Ajusta sus ángulos para dirigirlos al tumor.
+4. Evita en lo posible los órganos de riesgo.
+5. Evalúa el plan.
+6. Intenta mejorar la cobertura tumoral reduciendo la dosis a estructuras sanas.
 
-## Importante
-Es una simulación educativa simplificada. No es un TPS ni debe utilizarse para decisiones clínicas.
+## Alcance educativo
+
+La simulación simplifica deliberadamente conceptos de radioterapia para una audiencia de preparatoria. No reproduce un sistema de planeación de tratamiento clínico y no debe utilizarse para decisiones médicas.
 
 ## Licencia
-MIT.
+
+El código de este proyecto se distribuye bajo la licencia MIT. Consulta el archivo `LICENSE`.
