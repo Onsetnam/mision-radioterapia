@@ -22,8 +22,8 @@ const CASES={
     anatomy:"head",
     structures:[
       {key:"target",label:"Tumor",kind:"target",shapes:[{type:"ellipse",x:455,y:405,rx:48,ry:42}]},
-      {key:"eyeL",label:"Ojo izquierdo",shapes:[{type:"ellipse",x:322,y:294,rx:31,ry:24}]},
-      {key:"eyeR",label:"Ojo derecho",shapes:[{type:"ellipse",x:478,y:294,rx:31,ry:24}]},
+      {key:"eyeR",label:"Ojo derecho",shapes:[{type:"ellipse",x:322,y:294,rx:31,ry:24}]},
+      {key:"eyeL",label:"Ojo izquierdo",shapes:[{type:"ellipse",x:478,y:294,rx:31,ry:24}]},
       {key:"chiasm",label:"Quiasma óptico",shapes:[{type:"ellipse",x:401,y:348,rx:28,ry:14}]},
       {key:"stem",label:"Tronco encefálico",shapes:[{type:"ellipse",x:397,y:520,rx:34,ry:62}]},
       {key:"cochleas",label:"Cócleas",shapes:[{type:"circle",x:337,y:433,r:19},{type:"circle",x:468,y:433,r:19}]}
@@ -67,8 +67,8 @@ const CASES={
       {key:"bladder",label:"Vejiga",shapes:[{type:"ellipse",x:400,y:346,rx:68,ry:48}]},
       {key:"rectum",label:"Recto",shapes:[{type:"ellipse",x:401,y:520,rx:34,ry:58}]},
       {key:"bowel",label:"Intestino",shapes:[{type:"circle",x:346,y:296,r:37},{type:"circle",x:402,y:283,r:34},{type:"circle",x:459,y:302,r:38}]},
-      {key:"femurL",label:"Cabeza femoral izq.",shapes:[{type:"circle",x:274,y:523,r:43}]},
-      {key:"femurR",label:"Cabeza femoral der.",shapes:[{type:"circle",x:527,y:523,r:43}]}
+      {key:"femurR",label:"Cabeza femoral der.",shapes:[{type:"circle",x:274,y:523,r:43}]},
+      {key:"femurL",label:"Cabeza femoral izq.",shapes:[{type:"circle",x:527,y:523,r:43}]}
     ],
     toxicities:[
       {q:"Presenta aumento leve en frecuencia urinaria, sin dolor importante ni hematuria.",answer:1},
@@ -87,7 +87,7 @@ let nursingAnswers=[];
 
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2600)}
-function rgba(hex,a){const n=parseInt(hex.slice(1),16);return \`rgba(\${(n>>16)&255},\${(n>>8)&255},\${n&255},\${a})\`}
+function rgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`}
 function structureByKey(k){return currentCase.structures.find(s=>s.key===k)}
 function contourComplete(){return !!currentCase&&currentCase.structures.every(s=>contourDone[s.key])}
 function physicsUnlocked(){return contourComplete()}
@@ -146,7 +146,7 @@ function buildCT(){
     const x=b.cx+(rand()*2-1)*b.rx,y=b.cy+(rand()*2-1)*b.ry;
     if(!insideBody(x,y))continue;
     const v=Math.floor(120+rand()*80),a=.018+rand()*.035;
-    g.fillStyle=\`rgba(\${v},\${v},\${v},\${a})\`;g.fillRect(x,y,1.5+rand()*2,1.5+rand()*2);
+    g.fillStyle=`rgba(${v},${v},${v},${a})`;g.fillRect(x,y,1.5+rand()*2,1.5+rand()*2);
   }
   g.restore();
 
@@ -173,7 +173,7 @@ function buildStructureSelector(){
   selector.innerHTML="";
   currentCase.structures.forEach(s=>{
     const b=document.createElement("button");b.className="structure-btn";b.dataset.key=s.key;
-    b.style.borderColor=rgba(s.color,.75);b.innerHTML=\`<span style="color:\${s.color}">●</span> \${s.label}\`;
+    b.style.borderColor=rgba(s.color,.75);b.innerHTML=`<span style="color:${s.color}">●</span> ${s.label}`;
     b.addEventListener("click",()=>{selectedKey=s.key;updateUI();draw()});
     selector.appendChild(b);
   });
@@ -181,9 +181,26 @@ function buildStructureSelector(){
 
 function draw(){
   ctx.clearRect(0,0,W,H);ctx.drawImage(ctCanvas,0,0);
+  drawOrientationMarkers();
   drawContourOverlays();
   if(activeRole==="physics"){drawDose();drawBeamRing();drawBeams()}
   if(activeRole==="doctor")drawBrushHint();
+}
+
+function drawOrientationMarkers(){
+  ctx.save();
+  ctx.font="900 22px system-ui";
+  ctx.textBaseline="middle";
+  ctx.fillStyle="rgba(255,255,255,.78)";
+  ctx.textAlign="left";
+  ctx.fillText("R",22,H/2);
+  ctx.textAlign="right";
+  ctx.fillText("L",W-22,H/2);
+  ctx.font="700 11px system-ui";
+  ctx.fillStyle="rgba(255,255,255,.48)";
+  ctx.textAlign="center";
+  ctx.fillText("orientación radiológica",W/2,34);
+  ctx.restore();
 }
 
 function drawContourOverlays(){
@@ -203,7 +220,7 @@ function tintLayer(layer,color){
 function drawBrushHint(){
   const s=structureByKey(selectedKey);if(!s)return;
   ctx.save();ctx.font="800 16px system-ui";ctx.textAlign="center";
-  const txt=\`Colorea: \${s.label}\`;
+  const txt=`Colorea: ${s.label}`;
   ctx.fillStyle="rgba(5,11,20,.82)";roundRect(ctx,250,730,300,42,14);ctx.fill();
   ctx.fillStyle=s.color;ctx.fillText(txt,400,757);ctx.restore();
 }
@@ -230,7 +247,7 @@ function drawDose(){
   for(let y=b.cy-b.ry;y<=b.cy+b.ry;y+=7)for(let x=b.cx-b.rx;x<=b.cx+b.rx;x+=7){
     if(!insideBody(x,y))continue;const d=doseAt(x,y);if(d<.09)continue;
     const n=d/Math.max(1,beams.length*.72);let col=n>.75?"255,185,90":n>.48?"172,237,111":"83,232,174";
-    ctx.fillStyle=\`rgba(\${col},\${clamp(.08+d*.1,.08,.46)})\`;ctx.fillRect(x,y,8,8);
+    ctx.fillStyle=`rgba(${col},${clamp(.08+d*.1,.08,.46)})`;ctx.fillRect(x,y,8,8);
   }ctx.restore();
 }
 function drawBeams(){
@@ -288,8 +305,8 @@ function validateSelectedContour(){
     if(t)truth++;if(p)pred++;if(t&&p)inter++;
   }
   const dice=(pred+truth)?2*inter/(pred+truth):0;contourScores[selectedKey]=dice;
-  if(dice>=.48){contourDone[selectedKey]=true;toast(\`¡Buen contorno! Coincidencia educativa: \${Math.round(dice*100)}%.\`)}
-  else{contourDone[selectedKey]=false;toast(\`Coincidencia \${Math.round(dice*100)}%. Ajusta el volumen y vuelve a validar.\`)}
+  if(dice>=.48){contourDone[selectedKey]=true;toast(`¡Buen contorno! Coincidencia educativa: ${Math.round(dice*100)}%.`)}
+  else{contourDone[selectedKey]=false;toast(`Coincidencia ${Math.round(dice*100)}%. Ajusta el volumen y vuelve a validar.`)}
   if(contourComplete()){toast("¡Contorneo completo! Física médica ya está desbloqueada.");activeRole="physics"}
   updateUI();draw();
 }
@@ -331,7 +348,7 @@ function renderMetrics(){
   if(!lastPlan)return;
   const vals=[["Cobertura blanco",Math.round(lastPlan.coverage)+"%"],["Tejido sano",lastPlan.healthy.toFixed(2)]];
   lastPlan.oars.slice(0,4).forEach(o=>vals.push([o.label,o.dose.toFixed(2)]));
-  vals.forEach(([a,b])=>{const d=document.createElement("div");d.className="metric";d.innerHTML=\`<span>\${a}</span><b>\${b}</b>\`;box.appendChild(d)});
+  vals.forEach(([a,b])=>{const d=document.createElement("div");d.className="metric";d.innerHTML=`<span>${a}</span><b>${b}</b>`;box.appendChild(d)});
 }
 
 function renderNursing(){
@@ -339,7 +356,7 @@ function renderNursing(){
   const list=document.getElementById("toxicityQuestions");list.innerHTML="";nursingAnswers=Array(currentCase.toxicities.length).fill(null);
   currentCase.toxicities.forEach((q,i)=>{
     const card=document.createElement("div");card.className="tox-card";
-    card.innerHTML=\`<p><b>Situación \${i+1}.</b> \${q.q}</p><div class="tox-options"></div>\`;
+    card.innerHTML=`<p><b>Situación ${i+1}.</b> ${q.q}</p><div class="tox-options"></div>`;
     const opts=card.querySelector(".tox-options");
     [0,1,2,3].forEach(g=>{
       const b=document.createElement("button");b.textContent="Grado "+g;b.addEventListener("click",()=>{
@@ -353,7 +370,7 @@ function evaluateNursing(){
   if(nursingAnswers.some(v=>v===null)){toast("Responde las tres situaciones antes de evaluar.");return}
   let correct=0;nursingAnswers.forEach((v,i)=>{if(v===currentCase.toxicities[i].answer)correct++});
   const r=document.getElementById("nursingResult");r.classList.remove("hidden");
-  r.innerHTML=\`<b>\${correct}/\${currentCase.toxicities.length} correctas.</b> \${correct===currentCase.toxicities.length?"Excelente identificación de severidad.":"Revisa qué síntomas cambian de una toxicidad leve a una que requiere más intervención."} <br><small>Esta escala es una simplificación educativa y no sustituye CTCAE, protocolos institucionales ni valoración clínica.</small>\`;
+  r.innerHTML=`<b>${correct}/${currentCase.toxicities.length} correctas.</b> ${correct===currentCase.toxicities.length?"Excelente identificación de severidad.":"Revisa qué síntomas cambian de una toxicidad leve a una que requiere más intervención."} <br><small>Esta escala es una simplificación educativa y no sustituye CTCAE, protocolos institucionales ni valoración clínica.</small>`;
   document.getElementById("nurseProgress").textContent=correct===currentCase.toxicities.length?"Completado ✓":"Evaluado";
 }
 
@@ -383,7 +400,7 @@ function updateUI(){
   if(activeRole==="doctor"){
     document.getElementById("missionNum").textContent="1";document.getElementById("missionTitle").textContent="Contorneo médico";
     document.getElementById("missionText").textContent="Selecciona un volumen arriba y coloréalo con el dedo. Valida cada estructura antes de pasar a física.";
-    currentCase.structures.forEach(s=>{const r=document.createElement("div");r.className="status-row";const sc=contourScores[s.key];r.innerHTML=\`<span><i style="color:\${s.color}">●</i> \${s.label}</span><b>\${contourDone[s.key]?"✓ "+Math.round(sc*100)+"%":sc===null?"Pendiente":Math.round(sc*100)+"% · ajustar"}</b>\`;status.appendChild(r)});
+    currentCase.structures.forEach(s=>{const r=document.createElement("div");r.className="status-row";const sc=contourScores[s.key];r.innerHTML=`<span><i style="color:${s.color}">●</i> ${s.label}</span><b>${contourDone[s.key]?"✓ "+Math.round(sc*100)+"%":sc===null?"Pendiente":Math.round(sc*100)+"% · ajustar"}</b>`;status.appendChild(r)});
   }else if(activeRole==="physics"){
     document.getElementById("missionNum").textContent="2";document.getElementById("missionTitle").textContent="Planeación física";
     document.getElementById("missionText").textContent="Distribuye los haces alrededor de la paciente, observa la dosis y busca cobertura del blanco con menor exposición de OAR.";
@@ -394,16 +411,16 @@ function updateUI(){
     status.innerHTML='<div class="status-row"><span>Plan de tratamiento</span><b>Evaluado ✓</b></div>';
   }
 
-  document.getElementById("beamCount").textContent=\`\${beams.length} / 5 haces\`;
+  document.getElementById("beamCount").textContent=`${beams.length} / 5 haces`;
   const chips=document.getElementById("beamChips");chips.innerHTML="";if(!beams.length){const c=document.createElement("span");c.className="beam-chip";c.textContent="Aún no hay haces";chips.appendChild(c)}
-  else beams.forEach((a,i)=>{const c=document.createElement("span");c.className="beam-chip";let deg=Math.round((a*180/Math.PI+360)%360);c.textContent=\`Haz \${i+1}: \${deg}°\`;chips.appendChild(c)});
+  else beams.forEach((a,i)=>{const c=document.createElement("span");c.className="beam-chip";let deg=Math.round((a*180/Math.PI+360)%360);c.textContent=`Haz ${i+1}: ${deg}°`;chips.appendChild(c)});
   document.getElementById("undoBtn").disabled=!beams.length||!physicsUnlocked();document.getElementById("resetPlanBtn").disabled=!beams.length;document.getElementById("evaluatePlanBtn").disabled=!physicsUnlocked()||beams.length<3;
   document.getElementById("score").textContent=lastPlan?lastPlan.score:"—";document.getElementById("meterFill").style.width=(lastPlan?lastPlan.score:0)+"%";
   let grade="Completa primero el contorneo.";if(physicsUnlocked())grade=beams.length<3?"Coloca al menos 3 haces.":"Listo para evaluar.";if(lastPlan)grade=lastPlan.score>=85?"Excelente plan":lastPlan.score>=70?"Buen plan":lastPlan.score>=55?"Plan mejorable":"Replantea los ángulos";
   document.getElementById("grade").textContent=grade;renderMetrics();
   const pr=document.getElementById("planResult");if(lastPlan){pr.classList.remove("hidden");pr.textContent=lastPlan.score>=85?"Muy buena cobertura con una distribución favorable de entradas.":lastPlan.score>=70?"Buen equilibrio. Intenta reducir un poco más la exposición de OAR.":"Prueba separar mejor los ángulos y evitar trayectorias que crucen varios OAR."}else pr.classList.add("hidden");
 
-  document.getElementById("doctorProgress").textContent=contourComplete()?"Completado ✓":\`\${currentCase.structures.filter(s=>contourDone[s.key]).length}/6 contornos\`;
+  document.getElementById("doctorProgress").textContent=contourComplete()?"Completado ✓":`${currentCase.structures.filter(s=>contourDone[s.key]).length}/6 contornos`;
   document.getElementById("physicsProgress").textContent=!physicsUnlocked()?"Bloqueado":planEvaluated?"Completado ✓":"Disponible";
   if(!nurseUnlocked())document.getElementById("nurseProgress").textContent="Bloqueado";
 }
