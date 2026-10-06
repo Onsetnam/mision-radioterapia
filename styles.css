@@ -32,3 +32,8 @@ footer{text-align:center;color:#74869e;font-size:.72rem;margin-top:12px}.toast{p
 .live-steps li+li{margin-top:6px}
 .live-steps li.done-step{color:#79e2ad}
 @media(max-width:720px){.help-card{width:96vw;max-height:94vh}.help-header h2{font-size:1.1rem}.help-list{font-size:.8rem}}
+
+.teacher-stock-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;margin-top:10px}
+.stock-action{border-color:rgba(255,209,102,.55)!important;background:rgba(255,209,102,.10)!important;color:#ffe5a0!important}
+.structure-btn.reference-saved{box-shadow:inset 0 0 0 1px rgba(255,209,102,.35)}
+@media(max-width:720px){.teacher-stock-row{grid-template-columns:1fr}}

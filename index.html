@@ -62,16 +62,22 @@
             <button class="mini-btn shift-btn" data-dx="5" data-dy="0">→</button>
             <button class="mini-btn scale-btn" data-scale="0.94">− tamaño</button>
             <button class="mini-btn scale-btn" data-scale="1.06">+ tamaño</button>
+            <button id="captureReferenceBtn" class="mini-btn primary">✍️ Guardar dibujo como referencia</button>
+            <button id="loadReferenceBtn" class="mini-btn">↩ Editar referencia dibujada</button>
             <button id="restoreStockBtn" class="mini-btn">Restaurar stock</button>
           </div>
         </div>
         <div class="teacher-session">
           <div class="eyebrow">Sesión Classroom</div>
           <div class="teacher-session-row">
-            <input id="teacherSessionCode" class="session-input" maxlength="16" placeholder="Ej. CARO01" autocomplete="off">
+            <input id="teacherSessionCode" class="session-input" maxlength="16" placeholder="Ej. Salón-Curie01" autocomplete="off">
             <button id="publishSessionBtn" class="mini-btn primary">Publicar a todos</button>
           </div>
           <div class="tiny muted">Las iPads conectadas a ese código recibirán los contornos corregidos automáticamente.</div>
+          <div class="teacher-stock-row">
+            <button id="publishStockBtn" class="mini-btn stock-action">⭐ Convertir estas referencias en Stock</button>
+            <span class="tiny muted">Úsalo cuando Caro termine de revisar los 6 contornos. Desde entonces, “Contornos stock” cargará esta versión.</span>
+          </div>
         </div>
       </div>
 
@@ -186,7 +192,7 @@
     </button>
     <div class="start-divider">o</div>
     <div class="session-join">
-      <input id="studentSessionCode" class="session-input" maxlength="16" placeholder="Código de sesión · ej. CARO01" autocomplete="off">
+      <input id="studentSessionCode" class="session-input" maxlength="16" placeholder="Código de sesión · ej. Salón-Curie01" autocomplete="off">
       <button id="joinSessionBtn" class="btn primary">Conectarme a sesión</button>
     </div>
     <div id="joinStatus" class="tiny muted"></div>
@@ -244,8 +250,9 @@
       <summary>👩‍🏫 ¿Cómo funciona el modo profesor y Classroom?</summary>
       <ol class="help-list">
         <li>Entra a <b>Modo profesor</b> y autentícate.</li>
-        <li>Selecciona un volumen y usa las flechas / tamaño para corregir su referencia. “Mostrar referencias completas” permite revisar todos los objetivos a la vez.</li>
-        <li>Escribe un código de sesión, por ejemplo <b>CARO01</b>, y pulsa <b>Publicar a todos</b>.</li>
+        <li>Selecciona un volumen. Caro puede <b>dibujar el contorno con Pintar/Borrar</b> y pulsar <b>Guardar dibujo como referencia</b>. Repite con los 6 volúmenes. Para una referencia ya dibujada, usa <b>Editar referencia dibujada</b>.</li>
+        <li>Escribe un código de sesión, por ejemplo <b>Salón-Curie01</b>, y pulsa <b>Publicar a todos</b> para probar esos contornos en varias iPads.</li>
+        <li>Cuando Caro esté satisfecha con todos los contornos, pulsa <b>Convertir estas referencias en Stock</b>. A partir de ahí, futuras aperturas que elijan “Contornos stock” usarán esa versión.</li>
         <li>En cada iPad del alumnado, al abrir la app elige <b>Conectarme a sesión</b> e introduce ese mismo código.</li>
         <li>Si el profesor publica una corrección posterior, las iPads conectadas reciben los nuevos contornos automáticamente. <b>El progreso de cada alumna sigue siendo individual.</b></li>
       </ol>

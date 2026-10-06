@@ -18,14 +18,15 @@ La app incluye:
 - Validación educativa que penaliza tanto omisiones como dibujar fuera del objetivo.
 - Planeación simplificada con 3–5 haces.
 - Evaluación de toxicidad en el rol de Enfermería.
-- Modo profesor con edición de referencias.
+- Modo profesor con edición de referencias y captura de contornos dibujados por la profesora.
+- El profesor puede convertir los 6 contornos revisados en el nuevo **Stock** compartido para futuras aperturas.
 - Sesiones compartidas: el alumnado puede usar los contornos stock o conectarse a un código de sesión publicado por el profesor. Las referencias de la sesión se sincronizan automáticamente; el progreso de cada alumna permanece independiente.
 
 ## Classroom
 
 1. El profesor abre la app y elige los contornos stock o se conecta a una sesión existente.
 2. Entra a **Modo profesor**.
-3. Ajusta las referencias y escribe un código, por ejemplo `CARO01`.
+3. Ajusta las referencias y escribe un código, por ejemplo `SALON-CURIE01`.
 4. Pulsa **Publicar a todos**.
 5. Las iPads del alumnado eligen **Conectarme a sesión** e introducen el mismo código.
 6. Los cambios posteriores del profesor se reflejan automáticamente en las iPads conectadas.
