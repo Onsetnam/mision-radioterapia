@@ -169,6 +169,7 @@
           <div><span>⚛️ Física médica</span><b id="physicsProgress">Bloqueado</b></div>
           <div><span>💙 Enfermería</span><b id="nurseProgress">Bloqueado</b></div>
         </div>
+        <button id="reopenCelebrationBtn" class="btn celebration-reopen hidden">🏆 Ver felicitación otra vez</button>
       </div>
 
       <div class="section note">
@@ -278,6 +279,24 @@
       <button id="teacherCancelBtn" class="btn">Cancelar</button>
       <button id="teacherLoginBtn" class="btn primary">Entrar</button>
     </div>
+  </div>
+</div>
+
+<div id="celebrationModal" class="modal hidden">
+  <div class="modal-card celebration-card">
+    <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
+    <div class="celebration-icon">✨</div>
+    <div class="eyebrow celebration-eyebrow">Misión completada</div>
+    <h2>¡Felicidades!</h2>
+    <p class="celebration-lead">Completaste el recorrido del equipo de radioterapia.</p>
+    <p class="celebration-message"><b>Marie Curie estaría orgullosa de ti.</b><br>Hoy observaste, planeaste y cuidaste como parte de un equipo que usa ciencia para ayudar a las personas.</p>
+    <div class="celebration-roles">
+      <span>🩺 Contorneaste</span>
+      <span>⚛️ Planeaste</span>
+      <span>💙 Evaluaste toxicidad</span>
+    </div>
+    <button id="celebrationReviewBtn" class="btn primary celebration-close">← Volver a revisar mi misión</button>
+    <div class="tiny muted celebration-photo-note">Puedes volver a abrir esta pantalla desde “Ver felicitación otra vez” para presumir tu misión o tomarte una foto.</div>
   </div>
 </div>
 
