@@ -82,7 +82,34 @@ function healthyDose(){let t=0,n=0;for(let y=imgRect.y;y<imgRect.y+imgRect.h;y+=
 function spread(){if(beams.length<2)return 0;const p=beams.slice().sort((a,b)=>a-b),g=[];for(let i=0;i<p.length;i++){const nx=i===p.length-1?p[0]+Math.PI*2:p[i+1];g.push(nx-p[i])}return clamp((Math.PI*1.35-Math.max(...g))/(Math.PI*.7),0,1)}
 function evalPlan(){if(beams.length<3){toast("Necesitas al menos 3 haces.");return}const td=meanDose(S("target")),oars=structures.slice(1).map(s=>({label:s.label,dose:meanDose(s)})),healthy=healthyDose(),coverage=clamp(td/Math.max(1.7,beams.length*.56)*100,0,100),avg=oars.reduce((a,b)=>a+b.dose,0)/oars.length,score=Math.round(clamp(coverage-Math.max(0,avg-.45)*30-Math.max(0,healthy-.30)*18+spread()*9,0,100));lastPlan={coverage,oars,healthy,score};role="nurse";renderNurse();updateUI();draw();toast("Plan evaluado. Enfermería desbloqueada.")}
 function renderNurse(){const list=document.getElementById("toxicityList");list.innerHTML="";nurseAnswers=Array(toxicities.length).fill(null);toxicities.forEach((q,i)=>{const d=document.createElement("div");d.className="tox-card";d.innerHTML=`<p><b>Situación ${i+1}.</b> ${q.q}</p><div class="tox-options"></div>`;const o=d.querySelector(".tox-options");[0,1,2,3].forEach(g=>{const b=document.createElement("button");b.textContent="Grado "+g;b.onclick=()=>{nurseAnswers[i]=g;[...o.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected")};o.appendChild(b)});list.appendChild(d)});document.getElementById("nurseResult").classList.add("hidden")}
-function evalNurse(){if(nurseAnswers.some(v=>v===null)){toast("Responde las tres situaciones.");return}let c=0;nurseAnswers.forEach((v,i)=>{if(v===toxicities[i].answer)c++});const r=document.getElementById("nurseResult");r.classList.remove("hidden");r.innerHTML=`<b>${c}/3 correctas.</b> ${c===3?"Excelente identificación de severidad.":"Revisa qué síntomas indican mayor intervención."}<br><small>Escala educativa simplificada; no sustituye CTCAE ni protocolos institucionales.</small>`;document.getElementById("nurseProgress").textContent=c===3?"Completado ✓":"Evaluado"}
+function launchConfetti(){
+  const layer=document.getElementById("confettiLayer");if(!layer)return;
+  layer.innerHTML="";
+  const colors=["#6bdcff","#b794ff","#ffd166","#6ee7a8","#ff6f91","#ffffff"];
+  for(let i=0;i<42;i++){
+    const p=document.createElement("i");p.className="confetti-piece";
+    p.style.left=(Math.random()*100)+"%";
+    p.style.background=colors[i%colors.length];
+    p.style.animationDelay=(Math.random()*.65)+"s";
+    p.style.animationDuration=(2.1+Math.random()*1.5)+"s";
+    p.style.setProperty("--drift",(Math.random()*180-90)+"px");
+    layer.appendChild(p);
+  }
+}
+function showCelebration(){
+  document.getElementById("celebrationModal").classList.remove("hidden");
+  document.getElementById("reopenCelebrationBtn").classList.remove("hidden");
+  launchConfetti();
+}
+function hideCelebration(){document.getElementById("celebrationModal").classList.add("hidden")}
+function evalNurse(){
+  if(nurseAnswers.some(v=>v===null)){toast("Responde las tres situaciones.");return}
+  let c=0;nurseAnswers.forEach((v,i)=>{if(v===toxicities[i].answer)c++});
+  const r=document.getElementById("nurseResult");r.classList.remove("hidden");
+  r.innerHTML=`<b>${c}/3 correctas.</b> ${c===3?"Excelente identificación de severidad. ¡Misión completada!":"Revisa qué síntomas indican mayor intervención y vuelve a intentarlo."}<br><small>Escala educativa simplificada; no sustituye CTCAE ni protocolos institucionales.</small>`;
+  document.getElementById("nurseProgress").textContent=c===3?"Completado ✓":"Evaluado";
+  if(c===3)setTimeout(showCelebration,350);
+}
 function setRole(r){if(r==="physics"&&!physicsUnlocked()){toast("Completa los seis contornos para entrar a Física.");return}if(r==="nurse"&&!nurseUnlocked()){toast("Enfermería se desbloquea al evaluar el plan.");return}role=r;if(r==="nurse")renderNurse();updateUI();draw()}
 function selector(){const w=document.getElementById("structureSelector");w.innerHTML="";structures.forEach(s=>{const b=document.createElement("button");b.className="structure-btn"+(s.key===selectedKey?" active":"")+(done[s.key]?" done":"")+(s.referenceMask?" reference-saved":"");b.style.borderColor=rgba(s.color,.8);b.innerHTML=`<span style="color:${s.color}">●</span> ${s.label}${teacher&&s.referenceMask?" ★":""}`;b.onclick=()=>{selectedKey=s.key;updateUI();draw()};w.appendChild(b)})}
 function scoreLabel(sc){if(!sc)return"Pendiente";const pct=Math.round(sc.dice*100);if(sc.precision<.78)return pct+"% · fuera de raya";if(sc.recall<.64)return pct+"% · falta cubrir";return pct+"% · ajustar"}
@@ -158,6 +185,8 @@ document.getElementById("publishSessionBtn").onclick=publishSession;
 document.getElementById("captureReferenceBtn").onclick=captureReference;
 document.getElementById("loadReferenceBtn").onclick=loadReferenceForEditing;
 document.getElementById("publishStockBtn").onclick=publishStock;
+document.getElementById("celebrationReviewBtn").onclick=hideCelebration;
+document.getElementById("reopenCelebrationBtn").onclick=showCelebration;
 document.getElementById("helpBtn").onclick=showHelp;
 document.getElementById("helpInlineBtn").onclick=showHelp;
 document.getElementById("helpCloseBtn").onclick=hideHelp;
