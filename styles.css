@@ -10,3 +10,25 @@
 footer{text-align:center;color:#74869e;font-size:.72rem;margin-top:12px}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);opacity:0;pointer-events:none;transition:.2s;z-index:130;background:#0f2038;border:1px solid #345a80;color:#fff;padding:10px 14px;border-radius:13px;max-width:min(92vw,620px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
 .modal{position:fixed;inset:0;background:rgba(4,8,14,.66);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:120}.modal-card{width:min(92vw,420px);background:linear-gradient(180deg,rgba(15,29,51,.99),rgba(7,17,31,.99));border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:18px}.start-card{width:min(94vw,560px)}.start-card h2{font-size:1.25rem}.start-choice{width:100%;display:grid;gap:4px;text-align:left;margin-top:14px;padding:14px;border-radius:14px;border:1px solid #34536f;background:#10213a;color:#fff;cursor:pointer}.start-choice span{color:#a9b7cb;font-size:.78rem}.start-divider{text-align:center;color:#71839a;font-size:.75rem;margin:10px 0}.field{display:grid;gap:6px;margin-top:10px;font-size:.88rem}.field input,.session-input{background:#0c192b;border:1px solid #31506d;border-radius:10px;color:#fff;padding:10px 12px}.session-input{text-transform:uppercase;min-width:0}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}.checkline{font-size:.85rem}.tiny{font-size:.7rem;margin-top:5px}
 @media(max-width:980px){.layout{grid-template-columns:1fr}.canvas-wrap{min-height:0}}@media(max-width:720px){.app{padding:9px}.toolbar,.teacher-panel{grid-template-columns:1fr}.teacher-session{grid-column:auto}.teacher-session-row,.session-join{grid-template-columns:1fr}.tox-options,.metrics{grid-template-columns:1fr 1fr}.role-tab{font-size:.76rem}.role-tab span{display:block;margin:0 0 3px}}
+
+.help-card{width:min(94vw,780px);max-height:90vh;overflow:auto}
+.help-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.help-header h2{font-size:1.35rem}
+.help-close{width:36px;height:36px;border-radius:50%;border:1px solid #33516d;background:#10213a;color:#fff;font-size:1.4rem;line-height:1;cursor:pointer}
+.help-callout,.help-tip{border:1px solid rgba(107,220,255,.2);background:rgba(107,220,255,.06);border-radius:14px;padding:12px;font-size:.84rem;line-height:1.5}
+.help-stage{margin-top:12px;border:1px solid #243e59;background:#091728;border-radius:16px;padding:12px}
+.help-stage.current{border-color:#6bdcff;box-shadow:0 0 0 1px rgba(107,220,255,.18)}
+.help-stage-head{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
+.help-stage-head>div{display:grid;gap:2px}
+.help-stage-head span:not(.help-number){color:#9fb0c8;font-size:.75rem}
+.help-number{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6bdcff,#b794ff);color:#07111f;font-weight:950}
+.help-list{margin:10px 0 0;padding-left:22px;color:#dce6f3;font-size:.82rem;line-height:1.5}
+.help-list li+li{margin-top:7px}
+.teacher-help{margin-top:12px;border:1px solid #354c69;border-radius:14px;padding:10px 12px;background:#0c192b}
+.teacher-help summary{cursor:pointer;font-weight:850}
+.help-tip{margin-top:12px;border-color:rgba(255,209,102,.22);background:rgba(255,209,102,.06)}
+.current-guide{border-color:rgba(107,220,255,.17)}
+.live-steps{margin:10px 0 0;padding-left:21px;color:#d7e4f4;font-size:.79rem;line-height:1.45}
+.live-steps li+li{margin-top:6px}
+.live-steps li.done-step{color:#79e2ad}
+@media(max-width:720px){.help-card{width:96vw;max-height:94vh}.help-header h2{font-size:1.1rem}.help-list{font-size:.8rem}}

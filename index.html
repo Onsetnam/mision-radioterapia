@@ -17,8 +17,9 @@
     </div>
     <div class="top-actions">
       <span id="sessionBadge" class="session-badge hidden">📦 Stock</span>
+      <button id="helpBtn" class="mini-btn">❓ Cómo usar</button>
       <button id="teacherBtn" class="mini-btn">👩‍🏫 Modo profesor</button>
-      <span class="tag">Mujeres en la Ciencia · V0.4 Classroom</span>
+      <span class="tag">Mujeres en la Ciencia · V0.4.1 Guided</span>
     </div>
   </header>
 
@@ -120,6 +121,17 @@
         <div id="statusBox" class="status-box"></div>
       </div>
 
+      <div class="section current-guide">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Qué hacer ahora</div>
+            <h2 id="liveGuideTitle">Paso a paso</h2>
+          </div>
+          <button id="helpInlineBtn" class="mini-btn">Ver guía completa</button>
+        </div>
+        <ol id="liveSteps" class="live-steps"></ol>
+      </div>
+
       <div class="section" id="physicsPanel">
         <div class="section-head">
           <h2>Planeación física</h2>
@@ -167,7 +179,7 @@
   <div class="modal-card start-card">
     <div class="eyebrow">Antes de empezar</div>
     <h2>¿Cómo quieres cargar los contornos de referencia?</h2>
-    <p class="muted">Puedes usar los contornos incluidos en la app o conectarte a una sesión preparada por el profesor.</p>
+    <p class="muted">Puedes usar los contornos incluidos en la app o conectarte a una sesión preparada por el profesor. Después te mostraremos una guía paso a paso.</p>
     <button id="useStockBtn" class="start-choice">
       <b>📦 Usar contornos stock</b>
       <span>Empieza inmediatamente con las referencias incluidas en esta versión.</span>
@@ -178,6 +190,74 @@
       <button id="joinSessionBtn" class="btn primary">Conectarme a sesión</button>
     </div>
     <div id="joinStatus" class="tiny muted"></div>
+  </div>
+</div>
+
+<div id="helpModal" class="modal hidden">
+  <div class="modal-card help-card">
+    <div class="help-header">
+      <div>
+        <div class="eyebrow">Guía de uso</div>
+        <h2>Cómo completar Misión Radioterapia</h2>
+      </div>
+      <button id="helpCloseX" class="help-close" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="help-callout">
+      <b>Objetivo:</b> completa los tres roles en orden. Cada etapa desbloquea la siguiente:
+      <strong>Doctora → Física médica → Enfermería.</strong>
+    </div>
+
+    <div class="help-stage" data-help-stage="doctor">
+      <div class="help-stage-head"><span class="help-number">1</span><div><b>🩺 Doctora · Contorneo</b><span>Primero identifica y dibuja los volúmenes.</span></div></div>
+      <ol class="help-list">
+        <li>Arriba de la CT, toca el volumen que quieres trabajar: <b>Tumor, Corazón, Pulmón izquierdo, Pulmón derecho, Mama derecha o Médula espinal.</b></li>
+        <li>El <b>contorno punteado</b> del color correspondiente indica el objetivo. Con <b>🖌️ Pintar</b>, colorea el interior de esa guía con el dedo.</li>
+        <li>Si te pasas de la línea, cambia a <b>🧽 Borrar</b> y limpia únicamente la parte que quedó fuera. “Limpiar volumen” borra por completo ese dibujo.</li>
+        <li>Pulsa <b>Validar contorno</b>. El sistema revisa cuánto cubriste y cuánto te saliste. Si no pasa, corrígelo y vuelve a validar.</li>
+        <li>Repite con los <b>6 volúmenes</b>. Cuando todos tengan ✓, Física médica se desbloquea automáticamente.</li>
+      </ol>
+    </div>
+
+    <div class="help-stage" data-help-stage="physics">
+      <div class="help-stage-head"><span class="help-number">2</span><div><b>⚛️ Física médica · Planeación</b><span>Después diseña un plan simplificado de tratamiento.</span></div></div>
+      <ol class="help-list">
+        <li>Toca el <b>aro punteado alrededor de la paciente</b> para colocar un haz. Necesitas al menos <b>3 haces</b> y puedes usar hasta 5.</li>
+        <li>Cada haz apunta al tumor. Para cambiar su entrada, <b>arrastra el círculo numerado</b> alrededor del aro.</li>
+        <li>Observa el mapa de dosis: busca <b>buena concentración en el tumor</b> evitando que demasiados haces crucen corazón, pulmones u otros órganos a riesgo.</li>
+        <li>Usa <b>Deshacer</b> o <b>Reiniciar haces</b> si quieres probar otra geometría.</li>
+        <li>Cuando estés conforme, pulsa <b>Evaluar plan</b>. Verás cobertura, exposición relativa de OAR y una puntuación. Esto desbloquea Enfermería.</li>
+      </ol>
+    </div>
+
+    <div class="help-stage" data-help-stage="nurse">
+      <div class="help-stage-head"><span class="help-number">3</span><div><b>💙 Enfermería · Toxicidad</b><span>Finalmente evalúa síntomas durante el tratamiento.</span></div></div>
+      <ol class="help-list">
+        <li>Lee cada situación clínica.</li>
+        <li>Selecciona un grado educativo de severidad: <b>0 = sin toxicidad, 1 = leve, 2 = moderada, 3 = severa.</b></li>
+        <li>Responde las tres situaciones y pulsa <b>Evaluar toxicidad</b>.</li>
+        <li>El resultado cierra el recorrido y muestra cómo Enfermería participa en el seguimiento de la paciente.</li>
+      </ol>
+    </div>
+
+    <details class="teacher-help">
+      <summary>👩‍🏫 ¿Cómo funciona el modo profesor y Classroom?</summary>
+      <ol class="help-list">
+        <li>Entra a <b>Modo profesor</b> y autentícate.</li>
+        <li>Selecciona un volumen y usa las flechas / tamaño para corregir su referencia. “Mostrar referencias completas” permite revisar todos los objetivos a la vez.</li>
+        <li>Escribe un código de sesión, por ejemplo <b>CARO01</b>, y pulsa <b>Publicar a todos</b>.</li>
+        <li>En cada iPad del alumnado, al abrir la app elige <b>Conectarme a sesión</b> e introduce ese mismo código.</li>
+        <li>Si el profesor publica una corrección posterior, las iPads conectadas reciben los nuevos contornos automáticamente. <b>El progreso de cada alumna sigue siendo individual.</b></li>
+      </ol>
+    </details>
+
+    <div class="help-tip">
+      <b>Tip para la actividad:</b> no es necesario memorizar radioterapia. La app te va diciendo qué rol está activo, qué falta y cuándo puedes pasar al siguiente.
+    </div>
+
+    <div class="modal-actions">
+      <button id="helpCloseBtn" class="btn primary">Entendido, empezar misión</button>
+    </div>
   </div>
 </div>
 

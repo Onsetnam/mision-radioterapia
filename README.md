@@ -8,9 +8,10 @@ Mostrar de forma visual y breve cómo distintas profesiones participan en radiot
 
 ## Estado
 
-**V0.4 Classroom** — caso activo de mama izquierda.
+**V0.4.1 Guided Classroom** — caso activo de mama izquierda.
 
 La app incluye:
+- Guía de uso integrada que se abre al comenzar, botón permanente **Cómo usar** y pasos contextuales según el rol activo.
 - CT axial de referencia con orientación radiológica.
 - Tumor y cinco órganos a riesgo.
 - Contorneo táctil por volumen con guía punteada, pincel y borrador.
