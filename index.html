@@ -12,13 +12,12 @@
 <div class="app">
   <header class="topbar">
     <div>
-      <h1>🔬 Misión Radioterapia</h1>
+      <h1 id="appTitle">🔬 Misión Radioterapia</h1>
       <p class="subtitle">Caso activo: <b>Mama izquierda</b>. Trabaja como Doctora, Física médica y Enfermería.</p>
     </div>
     <div class="top-actions">
       <span id="sessionBadge" class="session-badge hidden">📦 Stock</span>
       <button id="helpBtn" class="mini-btn">❓ Cómo usar</button>
-      <button id="teacherBtn" class="mini-btn">👩‍🏫 Modo profesor</button>
       <span class="tag">Mujeres en la Ciencia · V0.4.1 Guided</span>
     </div>
   </header>
@@ -247,17 +246,6 @@
       </ol>
     </div>
 
-    <details class="teacher-help">
-      <summary>👩‍🏫 ¿Cómo funciona el modo profesor y Classroom?</summary>
-      <ol class="help-list">
-        <li>Entra a <b>Modo profesor</b> y autentícate.</li>
-        <li>Selecciona un volumen. Puedes <b>dibujar el contorno con Pintar/Borrar</b> y pulsar <b>Guardar dibujo como referencia</b>. Repite con los 6 volúmenes. Para una referencia ya dibujada, usa <b>Editar referencia dibujada</b>.</li>
-        <li>Escribe un código de sesión, por ejemplo <b>Salón-Curie01</b>, y pulsa <b>Publicar a todos</b> para probar esos contornos en varias iPads.</li>
-        <li>Cuando hayas terminado de revisar todos los contornos, pulsa <b>Convertir estas referencias en Stock</b>. A partir de ahí, futuras aperturas que elijan “Contornos stock” usarán esa versión.</li>
-        <li>En cada iPad del alumnado, al abrir la app elige <b>Conectarme a sesión</b> e introduce ese mismo código.</li>
-        <li>Si el profesor publica una corrección posterior, las iPads conectadas reciben los nuevos contornos automáticamente. <b>El progreso de cada alumna sigue siendo individual.</b></li>
-      </ol>
-    </details>
 
     <div class="help-tip">
       <b>Tip para la actividad:</b> no es necesario memorizar radioterapia. La app te va diciendo qué rol está activo, qué falta y cuándo puedes pasar al siguiente.
@@ -272,7 +260,7 @@
 <div id="teacherModal" class="modal hidden">
   <div class="modal-card">
     <h2>Modo profesor</h2>
-    <p class="muted">Permite editar referencias y publicarlas a una sesión compartida.</p>
+    <p class="muted">Acceso restringido.</p>
     <label class="field">Usuario<input id="teacherUser" type="text" autocomplete="username"></label>
     <label class="field">Password<input id="teacherPass" type="password" autocomplete="current-password"></label>
     <div class="modal-actions">
